@@ -6,25 +6,25 @@ solver = 'ode45';
 opts = odeset('RelTol',1e-10,'AbsTol',1e-10,'MaxStep',0.01);
 
 % Name of the file with the two vectorfields
-vfields = 'vectorfields';
+vfields = 'vectorfields_template';
 
-% Name of the file with the two Jacobianss
-jacobians = 'jacobians';
+% Name of the file with the two Jacobians
+jacobians = 'jacobians_template';
 
-% Name of the file with the two Jacobianss
-pfunction = 'pfunction';
+% Name of the file with the two Jacobians
+pfunction = 'pfunction_template';
 
 % Filippov parameter
 C = 1;
 
 % Parameters
-params = [];
+params = [0.4,0.5];
 
 % Initial condition
-y0 = [];
+y0 = [1,2,0];
 
 % Integration time
-T = ;
+T = 10*2*pi/params(2); %10 oscillations periods
 tspan = [0,T];
 
 % Output is the time, states and events as in Matlab's standard output
