@@ -1,4 +1,4 @@
-%%simulator
+%% Visualise the Rocking Block.
 
 phi = y(:,1);
 psi = y(:,3);
@@ -8,18 +8,11 @@ for i = 1:size(phi,1)
     pause(0.025);
 end
 
-
-
-
-
-
 function plotter(psi,phi)
 
-psi, phi
-%Set Up
-a = 0.1;
-b = 1;
-l= 0.5;
+parameters
+
+%Upright Block
 vertices = [[0;0],[0;1],[1;1],[1;0]];
 vertices = [a,0;0,b]*vertices;
 
