@@ -7,7 +7,7 @@ close all
 parameters
 
 %IC = [a*(1+mu)/b*(1+2*mu); 0; 0.1;0]; Almost oscillatory.
-IC = [params(4)/params(1) - 0.001,0,0,0];
+IC = [params(4)/params(1),0,0,0];
 t = linspace(0,4,200);
 [t,y] = ode45(@(t,x)odeFunLeft(t,x,params),t, IC);
     

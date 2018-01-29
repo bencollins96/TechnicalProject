@@ -7,27 +7,13 @@
 %TODO: Where are my oscillations?
 %TODO: Make a rocking block simulator
 
-%Fundamental Constants:
-g = 9.81;
-a = 0.15;
-b= 1; % a << b to be slender! Big assumption.
-l = 1; %pendulum length
-r0 = sqrt(a^2 + b^2); r1 = sqrt(a^2 +(2*b)^2);
-mu = 0.5; % pendulum mass is half the large mass.
-beta = 0.02; % The forcing amplitude
-omega = 0.1; % The forcing frequency
+parameters
 
-%Equation constants.
-I = g/(mu*a^2 +(4/3)*r0^2 );
-A = I*b*(1+2*mu);
-B = -I*2*b*mu;
-C = (I*b)/g;
-D = (I*2*b^2*(1+2*mu))/l;
-E = -(I*(3*mu*r1^2 + 4*r0^2))/(3*l);
-F = I*(2*b^2 - a^2*(3*mu + 4))/(3*g*l);
-phi_steady = (a*(1+mu))/(b*(1+2*mu));
-
-AEBD = A*E - B*D
+A = params(1); B = params(2);
+C = params(3); P = params(4);
+D = params(5); E = params(6);
+F = params(7); Q = params(8);
+beta = params(9); omega = params(10);   
 
 %Eigenvalues x4 2 complex, 2 real.
 
@@ -35,9 +21,9 @@ AEBD = A*E - B*D
 lambda_test = (1/sqrt(2))*sqrt((E + A) + sqrt((E+A)^2 - 4*(A*E - B*D)));
 discrim = sqrt((E+A)^2 - 4*(A*E - B*D));
 
-lambda_1 = (1/sqrt(2))*sqrt(-(E-A) + discrim);
+lambda_1 = (1/sqrt(2))*sqrt((E+A) + discrim);
 lambda_2 = -lambda_1;
-lambda_3 =(1/sqrt(2))*sqrt(-(E-A) - discrim);
+lambda_3 =(1/sqrt(2))*sqrt((E+A) - discrim);
 lambda_4 = - lambda_3;
 
 %Big A Matrix
@@ -46,17 +32,16 @@ LinearMatrix = [0, 1, 0, 0;...
                 0, 0, 0, 1;...
                 D, 0, E, 0];
 
-eigenvalues = eig(LinearMatrix)
+[evec, ~] = eig(LinearMatrix);
 
-%Eigenvectors 
-v_1 = [B/(A - lambda_1^2);1]; %B*lambda_1/(A - lambda_1^2); 1; lambda_1];
-v_2 = [B/(A - lambda_2^2);1]; %B*lambda_2/(A - lambda_2^2); 1; lambda_2];
-v_3 = [B/(A - lambda_3^2);1]; %B*lambda_3/(A - lambda_3^2); 1; lambda_3];
-v_4 = [B/(A - lambda_4^2);1]; %B*lambda_4/(A - lambda_4^2); 1; lambda_4];
-
+%Eigenvectors these are correct now! missing a minus sign.
+v_1 = [-B/(A - lambda_1^2);1];%-B*lambda_1/(A - lambda_1^2); 1; lambda_1];
+v_2 = [-B/(A - lambda_2^2);1];%-B*lambda_2/(A - lambda_2^2); 1; lambda_2];
+v_3 = [-B/(A - lambda_3^2);1];%-B*lambda_3/(A - lambda_3^2); 1; lambda_3];
+v_4 = [-B/(A - lambda_4^2);1];%-B*lambda_4/(A - lambda_4^2); 1; lambda_4];
 
 %Initial Conditions.
-phi_0  = phi_steady;
+phi_0  = P/A;
 dphi_0 = 0;
 psi_0  = 0;
 dpsi_0 = 0;
@@ -67,7 +52,7 @@ R_phi = beta*omega^2*(F*B - C*(E - omega^2))/eigPoly;
 R_psi = beta*omega^2*((F*B - C*(E - omega^2)*(A+omega^2))/(B*eigPoly))  - (C/B);
 
 %Transformed Initial Conditions
-phi_bar = phi_0 - phi_steady - R_phi;
+phi_bar = phi_0 - P/A - R_phi;
 psi_bar = psi_0 - R_psi;
 
 %sine and cosine coefficients:
@@ -86,7 +71,7 @@ t = linspace(0,1,100);
 
 y = v_1*C1*cosh(lambda_1*t) + v_2*C2*sinh(lambda_1*t) +  ...
     v_3*C3*cos(imag(lambda_3)*t) + v_4*C4*sin(imag(lambda_3)*t) ...
-    + [R_phi; R_psi]*cos(omega*t) +[phi_steady;0];
+    + [R_phi; R_psi]*cos(omega*t) +[P/A;0];
     
 
 plot(t,y)
