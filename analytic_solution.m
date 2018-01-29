@@ -23,17 +23,30 @@ A = I*b*(1+2*mu);
 B = -I*2*b*mu;
 C = (I*b)/g;
 D = (I*2*b^2*(1+2*mu))/l;
-E = -(I*(3*mu*r0^2 + 4*r0^2))/(3*l);
+E = -(I*(3*mu*r1^2 + 4*r0^2))/(3*l);
 F = I*(2*b^2 - a^2*(3*mu + 4))/(3*g*l);
 phi_steady = (a*(1+mu))/(b*(1+2*mu));
 
+AEBD = A*E - B*D
+
 %Eigenvalues x4 2 complex, 2 real.
-discrim = sqrt((E-A)^2 + 4*(A*E - B*D));
+
+
+lambda_test = (1/sqrt(2))*sqrt((E + A) + sqrt((E+A)^2 - 4*(A*E - B*D)));
+discrim = sqrt((E+A)^2 - 4*(A*E - B*D));
 
 lambda_1 = (1/sqrt(2))*sqrt(-(E-A) + discrim);
 lambda_2 = -lambda_1;
 lambda_3 =(1/sqrt(2))*sqrt(-(E-A) - discrim);
 lambda_4 = - lambda_3;
+
+%Big A Matrix
+LinearMatrix = [0, 1, 0, 0;...
+                A, 0, B, 0;...
+                0, 0, 0, 1;...
+                D, 0, E, 0];
+
+eigenvalues = eig(LinearMatrix)
 
 %Eigenvectors 
 v_1 = [B/(A - lambda_1^2);1]; %B*lambda_1/(A - lambda_1^2); 1; lambda_1];
@@ -41,10 +54,11 @@ v_2 = [B/(A - lambda_2^2);1]; %B*lambda_2/(A - lambda_2^2); 1; lambda_2];
 v_3 = [B/(A - lambda_3^2);1]; %B*lambda_3/(A - lambda_3^2); 1; lambda_3];
 v_4 = [B/(A - lambda_4^2);1]; %B*lambda_4/(A - lambda_4^2); 1; lambda_4];
 
+
 %Initial Conditions.
-phi_0  = 0.22;
+phi_0  = phi_steady;
 dphi_0 = 0;
-psi_0  = -0.6;
+psi_0  = 0;
 dpsi_0 = 0;
 
 %Initial forcing term:
