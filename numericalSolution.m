@@ -7,7 +7,7 @@ hold on
 parameters
 
 %IC = [a*(1+mu)/b*(1+2*mu); 0; 0.1;0]; Almost oscillatory.
-IC = [params(4)/params(1),0.01,0,0];
+IC = [params(4)/params(1),0,0,0];
 t = linspace(0,4,400);
 [t,y] = ode45(@(t,x)odeFunLeft(t,x,params),t, IC);
     
@@ -20,7 +20,7 @@ ylabel('Angle');
 %This one is working, be careful of sign!
 function dx = odeFunLeft(t,x,params)
 %Strictly phi > 0
-forcing = 0;
+forcing = params(9)*cos(params(10)*t);
 dx1 = x(2);
 dx2 = params(1)*x(1) + params(2)*x(3) + params(3)*forcing - params(4);
 dx3 = x(4);

@@ -2,12 +2,12 @@
 
 %Fundamental Constants:
 g = 9.81;
-mu = 0.5;
+mu = 0.1;
 a =0.1;
 b = 1;
 l = 0.5;
-beta = 0;
-omega = 0;
+beta = 0.0001;
+omega = 10;
 
 %Equation Constants:
 r0 = sqrt(a^2 + b^2);

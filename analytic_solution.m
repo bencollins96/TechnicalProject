@@ -44,7 +44,7 @@ v_4 = [-B/(A - lambda_4^2);-B*lambda_4/(A - lambda_4^2); 1; lambda_4];
 %Initial Conditions.
 phi_0  = P/A;
 dphi_0 = 0.01;
-psi_0  = 0;
+psi_0  = 0.029;
 dpsi_0 = 0;
 
 %Correct up to here. Initial conditions are correct.

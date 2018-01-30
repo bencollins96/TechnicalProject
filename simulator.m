@@ -1,9 +1,11 @@
 %% Visualise the Rocking Block.
 
-phi = y(:,1);
-psi = y(:,3);
+phi = y(1,:);
+psi = y(3,:);
 
-for i = 1:size(phi,1)
+
+
+for i = 1:size(phi,2)
     plotter(psi(i),phi(i));
     pause(0.025);
 end
