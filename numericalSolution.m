@@ -2,13 +2,13 @@
 % TODO: Does psidot affect the block?
 % TODO: Doesn't look like the steady state is right 
 
-close all
+hold on
 
 parameters
 
 %IC = [a*(1+mu)/b*(1+2*mu); 0; 0.1;0]; Almost oscillatory.
-IC = [params(4)/params(1),0,0,0];
-t = linspace(0,4,200);
+IC = [params(4)/params(1),0.01,0,0];
+t = linspace(0,4,400);
 [t,y] = ode45(@(t,x)odeFunLeft(t,x,params),t, IC);
     
 plot(t,y(:,1),t,y(:,3));
