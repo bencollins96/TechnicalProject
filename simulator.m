@@ -3,11 +3,11 @@
 phi = y(1,:);
 psi = y(3,:);
 
-
-
+mov(size(phi,2)) = struct('cdata',[],'colormap',[]);
 for i = 1:size(phi,2)
     plotter(psi(i),phi(i));
-    pause(0.025);
+    mov(i) = getframe;
+    i
 end
 
 function plotter(psi,phi)
@@ -33,7 +33,7 @@ pendVec = [pendAttach,pendEnd];
 hold off
 plot([-1,2],[0;0]);
 hold on
-scatter(pendVec(1,2),pendVec(2,2),'filled');
+fig = scatter(pendVec(1,2),pendVec(2,2),'filled');
 patch(vertices(1,:),vertices(2,:),'green','FaceAlpha',0.5);
 plot(pendVec(1,:),pendVec(2,:),'k');
 axis([-1,2,-1,2])
