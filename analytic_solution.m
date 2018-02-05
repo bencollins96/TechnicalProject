@@ -14,10 +14,12 @@ A = params(1); B = params(2);
 C = params(3); P = params(4);
 D = params(5); E = params(6);
 F = params(7); Q = params(8);
-beta = params(9); omega = params(10);   
+beta = params(9); omega = params(10);  
+
+%Left rocking +  or right rocking -?
+rocking = -1;
     
 %Eigenvalues x4 2 complex, 2 real.
-
 
 lambda_test = (1/sqrt(2))*sqrt((E + A) + sqrt((E+A)^2 - 4*(A*E - B*D)));
 discrim = sqrt((E+A)^2 - 4*(A*E - B*D));
@@ -42,9 +44,9 @@ v_3 = [-B/(A - lambda_3^2);-B*lambda_3/(A - lambda_3^2); 1; lambda_3];
 v_4 = [-B/(A - lambda_4^2);-B*lambda_4/(A - lambda_4^2); 1; lambda_4];
 
 %Initial Conditions.
-phi_0  = P/A;
-dphi_0 = 0.01;
-psi_0  = 0.033;
+phi_0  = sign(rocking)*P/A;
+dphi_0 = 0;
+psi_0  = 0;
 dpsi_0 = 0;
 
 %Correct up to here. Initial conditions are correct.
@@ -57,7 +59,7 @@ R_psi = beta*omega^2*((F*B - C*(E - omega^2)*(A+omega^2))/(B*eigPoly)  - (C/B));
 
 
 %Transformed Initial Conditions
-phi_bar = phi_0 - P/A - R_phi;
+phi_bar = phi_0 - sign(rocking)*P/A - R_phi;
 psi_bar = psi_0 - R_psi;
 
 
@@ -81,33 +83,9 @@ c_1 = (1/2)*((dphi_0/A_3 + phi_bar/A_1) - (A_2/A_1)*A_12*(psi_bar - phi_bar/A_1)
 
 t = linspace(0,4,400);
 y = c_1*v_1*exp(lambda_1*t) + c_2*v_2*exp(lambda_2*t) + c_3*v_3*exp(lambda_3*t) ...
-    + c_4*v_4*exp(lambda_4*t) + [R_phi; 0; R_psi;0]*cos(omega*t) +[P/A;0;0;0];
+    + c_4*v_4*exp(lambda_4*t) + [R_phi; 0; R_psi;0]*cos(omega*t) + sign(rocking)*[P/A;0;0;0];
 
 
-% Lets try with the exponentials,  no cosine/sine simpification. 
-% B_11 = (A - lambda_1^2)/(2*(lambda_1^2 - lambda_2^2));
-% B_33 = (A - lambda_3^2)/(2*(lambda_1^2 - lambda_3^2));
-% 
-% 
-% 
-% sine and cosine coefficients:
-% C_12 = (A -lambda_1^2)/(lambda_1^2 + imag(lambda_3)^2);
-% C_22 = (A + imag(lambda_3)^2)/(lambda_1^2 + imag(lambda_3)^2);
-% 
-% C1 = C_12*(-psi_bar + (phi_bar*(A + imag(lambda_3^2)))/B);
-% C2 = -(C_12/lambda_1)*(dpsi_0 - (dphi_0*(A + imag(lambda_3^2)))/B);
-% 
-% C3 = C_22*(psi_bar - (phi_bar*(A - lambda_1^2))/B);
-% C4 = (C_22/imag(lambda_3))*(dpsi_0 - (dphi_0*(A - lambda_1^2))/B);
-% 
-% The whole equations
-% 
-% t = linspace(0,1,100);
-% 
-% y = v_1*C1*cosh(lambda_1*t) + v_2*C2*sinh(lambda_1*t) +  ...
-%     v_3*C3*cos(imag(lambda_3)*t) + v_4*C4*sin(imag(lambda_3)*t) ...
-%     + [R_phi; R_psi]*cos(omega*t) +[P/A;0];
-    
 hold on
 plot(t,y(1,:),t,y(3,:));
 xlabel('Time');
