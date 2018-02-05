@@ -1,11 +1,69 @@
-%% Rocking Block Analytic Solution
-% First, a lot of coefficients need to be defined. We have: a ,b, mu, g ,
-% beta, omega, which themselves form numbers and those numbers form
-% numbers...
+%%Analytic_composite
+
+%TODO: Want to find the first zero.....
+%TODO: want to define a function that gives me position of block...
+%TODO: Dodgy things happen can happen, system seems to gain energy...
+clear all
+
+parameters
+
+tLim = 10;
+IC = [P/A - 0.05, 0,0,0];
+crossTime = getCrossTime(IC,tLim)
+yTotal = [];
+tTotal = [];
+currentTime = 0;
 
 
-%TODO: include impact
-%TODO: Check Forcing terms..
+%NOT WORKING. I think it is because solution doesnt know which side to
+%start on as im starting at phi = 0.
+for i = 1:400
+    crossTime = getCrossTime(IC,tLim);
+    tVec = linspace(0,crossTime,200);
+    y = analytic(IC,tVec);
+    IC = y(:,end)';
+    IC(1) = IC(1) + sign(IC(2))*eps;
+    yTotal = [yTotal,y];
+    tTotal = [tTotal,tVec + currentTime];
+    
+    %To get times to match up
+    currentTime = currentTime + crossTime;
+    IC
+    i
+end
+size(yTotal)
+size(tTotal)
+
+plot(tTotal,yTotal);
+legend('phi','dphi','psi','dpsi');
+    
+    
+    
+
+
+
+
+function crossTime =  getCrossTime(IC,tLim)
+  initSign = sign(IC(1));
+  tVec = linspace(0,tLim,100);
+  
+  %Solution up to time limit
+  y = analytic(IC,tVec);
+  
+  %Dont know why this works...
+  signVec = sign(y(1,:));
+  x0 = tVec(find(signVec == -initSign, 1 ));
+  crossTime = fzero(@(t)phiAngle(IC,t),1);
+
+end
+
+function phiAng = phiAngle(IC,t)
+    y = analytic(IC,t);
+    phiAng = y(1,:);
+    
+end
+
+function y = analytic(IC,t)
 
 parameters
 
@@ -16,7 +74,7 @@ F = params(7); Q = params(8);
 beta = params(9); omega = params(10);  
 
 %Left rocking +  or right rocking -?
-rocking = -1;
+rocking = sign(IC(1));
     
 %Eigenvalues x4 2 complex, 2 real.
 
@@ -43,10 +101,16 @@ v_3 = [-B/(A - lambda_3^2);-B*lambda_3/(A - lambda_3^2); 1; lambda_3];
 v_4 = [-B/(A - lambda_4^2);-B*lambda_4/(A - lambda_4^2); 1; lambda_4];
 
 %Initial Conditions.
-phi_0  = sign(rocking)*P/A;
-dphi_0 = 0;
-psi_0  = 0;
-dpsi_0 = 0;
+
+% phi_0  = sign(rocking)*P/A;
+% dphi_0 = 0;
+% psi_0  = 0;
+% dpsi_0 = 0;
+
+phi_0  = IC(1);
+dphi_0 = IC(2);
+psi_0  = IC(3);
+dpsi_0 = IC(4);
 
 %Correct up to here. Initial conditions are correct.
 
@@ -80,16 +144,11 @@ c_2 = (1/2)*((-dphi_0/A_3 + phi_bar/A_1) - (A_2/A_1)*A_12*(psi_bar - phi_bar/A_1
 c_1 = (1/2)*((dphi_0/A_3 + phi_bar/A_1) - (A_2/A_1)*A_12*(psi_bar - phi_bar/A_1)...
               - (A_4/A_3)*A_56*(dpsi_0/A_5 - dphi_0/A_3));
 
-t = linspace(0,4,400);
 y = c_1*v_1*exp(lambda_1*t) + c_2*v_2*exp(lambda_2*t) + c_3*v_3*exp(lambda_3*t) ...
     + c_4*v_4*exp(lambda_4*t) + [R_phi; 0; R_psi;0]*cos(omega*t) + sign(rocking)*[P/A;0;0;0];
 
+end
 
-hold on
-plot(t,y(1,:),t,y(3,:));
-xlabel('Time');
-ylabel('Angle');
-legend('\phi','\psi');  
 
 
 
