@@ -17,14 +17,15 @@ pfunction = 'pfunction_template';
 % Filippov parameter
 C = 1;
 
-% Parameters
-params = [0.4,0.5];
+% Parameters 
+%params = [A,B,C,P,D,E,F,Q,beta,omega];
+parameters
 
 % Initial condition
-y0 = [1,2,0];
+y0 = [-params(4)/params(1),-0.01,0,0];
 
 % Integration time
-T = 10*2*pi/params(2); %10 oscillations periods
+T = 10; %10 oscillations periods
 tspan = [0,T];
 
 % Output is the time, states and events as in Matlab's standard output
