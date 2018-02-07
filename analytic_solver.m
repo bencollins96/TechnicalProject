@@ -3,13 +3,14 @@
 %TODO: Want to find the first zero.....
 %TODO: want to define a function that gives me position of block...
 %TODO: Dodgy things happen can happen, system seems to gain energy...
+%TODO: unless problem with linearising...       
 clear all
 
 parameters
 
 tLim = 10;
-IC = [P/A - 0.05, 0,0,0];
-crossTime = getCrossTime(IC,tLim)
+IC = [P/A ,0, 0,0.01]
+crossTime = getCrossTime(IC,tLim);
 yTotal = [];
 tTotal = [];
 currentTime = 0;
@@ -17,7 +18,7 @@ currentTime = 0;
 
 %NOT WORKING. I think it is because solution doesnt know which side to
 %start on as im starting at phi = 0.
-for i = 1:400
+for i = 1:20
     crossTime = getCrossTime(IC,tLim);
     tVec = linspace(0,crossTime,200);
     y = analytic(IC,tVec);
@@ -28,8 +29,8 @@ for i = 1:400
     
     %To get times to match up
     currentTime = currentTime + crossTime;
-    IC
-    i
+    IC;
+    i;
 end
 size(yTotal)
 size(tTotal)
@@ -50,9 +51,10 @@ function crossTime =  getCrossTime(IC,tLim)
   %Solution up to time limit
   y = analytic(IC,tVec);
   
-  %Dont know why this works...
   signVec = sign(y(1,:));
   x0 = tVec(find(signVec == -initSign, 1 ));
+  
+  %Gives error if escapes bounds. want to catch.
   crossTime = fzero(@(t)phiAngle(IC,t),1);
 
 end

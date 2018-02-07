@@ -14,6 +14,7 @@ te = []; ye = []; ie = []; se = [];
 stopit = 0;
 
 while ~stopit
+    dir
     [t,y,TE,YE,IE] = feval(solver,@filippovfunc,tspan,y0,options,vfields,jacobians,params,C,state,dir);
   
     y0 = y(end,:);

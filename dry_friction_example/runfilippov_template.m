@@ -1,3 +1,11 @@
+%TODO: doesnt work for all initial conditions... 
+%TODO: sometimes stops prematurely and gives NaNs (Gets through the impact
+%then same two values and then NaN's , always one same initial one.. I
+%think it is something to do with escaping to infinity...
+%very much hope not error in maths...
+%
+%TODO: sometimes it gives horzcat errors in ODE45 (FIXED by eps)
+
 % ODE solver
 solver = 'ode45';
 
@@ -17,12 +25,14 @@ pfunction = 'pfunction_template';
 % Filippov parameter
 C = 1;
 
-% Parameters 
-%params = [A,B,C,P,D,E,F,Q,beta,omega];
+% Parameters : params = [A,B,C,P,D,E,F,Q,beta,omega];
 parameters
 
+ss = -params(4)/params(1);
+
+% Problem IC y0 = [ss,0,0.01,0,0];
 % Initial condition
-y0 = [-params(4)/params(1),-0.01,0,0];
+y0 = [ss-0.001,0,0,0,0];
 
 % Integration time
 T = 10; %10 oscillations periods

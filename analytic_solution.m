@@ -45,7 +45,7 @@ v_4 = [-B/(A - lambda_4^2);-B*lambda_4/(A - lambda_4^2); 1; lambda_4];
 %Initial Conditions.
 phi_0  = sign(rocking)*P/A;
 dphi_0 = 0;
-psi_0  = 0;
+psi_0  = 0.01;
 dpsi_0 = 0;
 
 %Correct up to here. Initial conditions are correct.
@@ -83,7 +83,6 @@ c_1 = (1/2)*((dphi_0/A_3 + phi_bar/A_1) - (A_2/A_1)*A_12*(psi_bar - phi_bar/A_1)
 t = linspace(0,4,400);
 y = c_1*v_1*exp(lambda_1*t) + c_2*v_2*exp(lambda_2*t) + c_3*v_3*exp(lambda_3*t) ...
     + c_4*v_4*exp(lambda_4*t) + [R_phi; 0; R_psi;0]*cos(omega*t) + sign(rocking)*[P/A;0;0;0];
-
 
 hold on
 plot(t,y(1,:),t,y(3,:));

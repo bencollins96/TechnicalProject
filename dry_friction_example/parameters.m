@@ -3,7 +3,7 @@
 %Fundamental Constants:
 g = 9.81;
 mu = 0.5;
-a =0.1;
+a =0.001;
 b = 1;
 l = 0.5;
 beta = 0;
