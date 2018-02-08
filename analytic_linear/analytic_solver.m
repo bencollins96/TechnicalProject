@@ -10,13 +10,15 @@ clear all
 
 parameters
 
+%Angular Coefficient of Restitution
+r =0.5;
+
 tLim = 10;
 ss = -params(4)/params(1);
 IC = [ss-0.001*ss,0,0,0];
 yTotal = [];
 tTotal = [];
 currentTime = 0;
-r =0.5;
 
 for i = 1:20
     
@@ -57,6 +59,8 @@ plot(tTotal,yTotal);
 legend('phi','dphi','psi','dpsi');
 title('Analytic Solution');
 grid on
+xlabel('Time, t');
+ylabel('Angle/ Angular velocity');
     
     
 function crossTime =  getCrossTime(IC,tLim)
