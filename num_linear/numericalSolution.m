@@ -1,6 +1,6 @@
 %% Numerical Solution Left Rocking (phi > 0)
 % TODO: Does psidot affect the block?
-% TODO: Doesn't look like the steady state is right 
+
 clear all
 parameters
 
