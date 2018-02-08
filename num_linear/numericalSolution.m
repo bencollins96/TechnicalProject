@@ -5,18 +5,59 @@ clear all
 parameters
 
 ss = -P/A;
+r  = 0.9;
 
 %IC = [a*(1+mu)/b*(1+2*mu); 0; 0.1;0]; Almost oscillatory.
 %IC = [params(4)/params(1),-0.01,-0.0291,0]; this too...
-IC = [ss - 0.5*ss,0,0,0]
-t = linspace(0,4,400);
-options = odeset('Events',@eventFcn,'RelTol',1e-13,'AbsTol',1e-15);
-[t,y,te,ye,ie] = ode45(@(t,x)odeFunLeft(t,x,params,IC),t, IC,options);
-y = y';
-plot(t,y(1,:),t,y(3,:));
-legend('phi','psi');
+IC = [ss- 0.5*ss,0,0,0];
+
+%How long do we wait for an impact?
+tLim = 10;
+
+yTotal = [];
+tTotal = [];
+currentTime = 0;
+
+for i = 1:20
+    
+    
+    time = linspace(0,tLim,400);
+    options = odeset('Events',@eventFcn,'RelTol',1e-13,'AbsTol',1e-15);
+    [t,y,te,ye,ie] = ode45(@(t,x)odeFunLeft(t,x,params,IC),time, IC,options);
+    crossTime = te;
+    
+    if isempty(crossTime)
+        yTotal = [yTotal,y];
+        tTotal = [tTotal,tVec + currentTime];
+        fprintf('Block does not impact in %ds interval\n',tLim);
+        break
+    end
+    
+    %Solve up to crossTime
+    tVec = linspace(0,crossTime,200);
+    options = odeset('Events',@eventFcn,'RelTol',1e-13,'AbsTol',1e-15);
+    [t,y,te,ye,ie] = ode45(@(t,x)odeFunLeft(t,x,params,IC),tVec, IC,options);
+    
+    %Initial Conditions for cycle are end conditions of previous
+    IC = y(end,:);
+    IC(2) = r*IC(2);
+   
+    %Ensure that system starts on the correct corner.
+    IC(1) = sign(IC(2))*eps;
+    
+    %Add solution to total solution
+    yTotal = [yTotal;y];
+    tTotal = [tTotal,tVec + currentTime];
+    
+    %To match offset in times
+    currentTime = currentTime + crossTime;
+end
+    
+plot(tTotal,yTotal);
+legend('phi','dphi','psi','dpsi');
 xlabel('Time');
 ylabel('Angle');
+title('Numerical Solution - Linearised');
 grid on
 
 %This one is working, be careful of sign!

@@ -11,11 +11,11 @@ clear all
 parameters
 
 %Angular Coefficient of Restitution
-r =0.5;
+r =0.9;
 
 tLim = 10;
 ss = -params(4)/params(1);
-IC = [ss-0.001*ss,0,0,0];
+IC = [ss-0.5*ss,0,0,0];
 yTotal = [];
 tTotal = [];
 currentTime = 0;
