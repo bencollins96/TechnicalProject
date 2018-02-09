@@ -2,6 +2,9 @@ function [tvect,yvect,te,ye,ie,se] = filippov(vfields,jacobians,pfunction,solver
 % Version 2006-07-12
 % [tvect,yvect,te,ye,ie,se] = filippov(vfields,jacobians,pfunction,solver,tspan,y0,params,C,inopts)
 
+%ME! I added the coefficient of restitution.
+r = 0.9;
+
 t1 = tspan(end);
 t0 = tspan(1);
 
@@ -14,11 +17,15 @@ te = []; ye = []; ie = []; se = [];
 stopit = 0;
 
 while ~stopit
-    dir
+    %Solve the system up to t1.
     [t,y,TE,YE,IE] = feval(solver,@filippovfunc,tspan,y0,options,vfields,jacobians,params,C,state,dir);
-  
-    y0 = y(end,:);
     
+    %get ready for new solution, end point = new start point. Here is where
+    %I impose the impact rule.
+    y0 = y(end,:);
+    y0(2) = r*y0(2);
+    
+    %add y and t values to total, also add time of events..
     yvect = [yvect;y];
     tvect = [tvect;t];
     te = [te;TE];

@@ -25,18 +25,25 @@ pfunction = 'pfunction_template';
 % Filippov parameter
 C = 1;
 
-% Parameters : params = [A,B,C,P,D,E,F,Q,beta,omega];
+% Parameters: params =[A,B,C,P,D,E,F,Q,beta,omega];
 parameters
 
 ss = -params(4)/params(1);
 
 % Problem IC y0 = [ss,0,0.01,0,0];
 % Initial condition
-y0 = [ss-0.001,0,0,0,0];
+y0 = [-ss - 0.5*ss,0,0,0];
 
 % Integration time
-T = 10; %10 oscillations periods
+T = 2.75; %10 oscillations periods
 tspan = [0,T];
 
 % Output is the time, states and events as in Matlab's standard output
 [t,y,te,ye,ie,se] = filippov(vfields,jacobians,pfunction,solver,tspan,y0,params,C,opts);
+
+plot(t,y)
+legend('phi','dphi','psi','dpsi');
+title('Petri linear');
+xlabel('Time,t');
+ylabel('Angle/Angular velocity');
+grid on
