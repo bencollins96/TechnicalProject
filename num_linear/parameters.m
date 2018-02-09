@@ -6,7 +6,7 @@ mu = 0.5;
 a =0.001;
 b = 1;
 l = 0.5;
-beta = 0;
+beta = 0.001;
 omega = 10;
 
 %Equation Constants:

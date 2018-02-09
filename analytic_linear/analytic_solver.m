@@ -20,7 +20,7 @@ yTotal = [];
 tTotal = [];
 currentTime = 0;
 
-for i = 1:20
+for i = 1:10    
     
     %Find the crossing time, given "initial conditions"
     crossTime = getCrossTime(IC,tLim);
@@ -139,6 +139,7 @@ eigPoly = B*D -(E - omega^2)*(A + omega^2);
 R_phi = beta*omega^2*(F*B - C*(E - omega^2))/eigPoly;
 R_psi = beta*omega^2*((F*B - C*(E - omega^2)*(A+omega^2))/(B*eigPoly)  - (C/B));
 
+
 %Transformed Initial Conditions
 phi_bar = phi_0 - sign(rocking)*ss - R_phi;
 psi_bar = psi_0 - R_psi;
@@ -163,6 +164,8 @@ c_1 = (1/2)*((dphi_0/A_3 + phi_bar/A_1) - (A_2/A_1)*A_12*(psi_bar - phi_bar/A_1)
 
 y = c_1*v_1*exp(lambda_1*t) + c_2*v_2*exp(lambda_2*t) + c_3*v_3*exp(lambda_3*t) ...
     + c_4*v_4*exp(lambda_4*t) + [R_phi; 0; R_psi;0]*cos(omega*t) + sign(rocking)*[ss;0;0;0];
+
+y =y + [0;R_phi;0;R_psi]*omega*sin(omega*t);
 
 end
 

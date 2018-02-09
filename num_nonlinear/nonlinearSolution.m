@@ -69,6 +69,8 @@ function  dx=nonlinearODE(t,x,IC)
 
 nonlinParameters
 
+
+
 %Rocking side:
 rocking = sign(IC(1));
 
@@ -84,7 +86,7 @@ massMatrix = [M*r_0^2 + m*r_1^2 + J, x_12;...
    
 %Forcing term
 forcing = [M*r_0*sin(theta_0 + rocking*x(1)) + m*r_1*sin(theta_1 + rocking*x(1)); -cos(x(3))*m*l];
-forcing = forcing.*fddot;
+forcing = forcing.*(beeta*omega^2*cos(omega*t));
 
 %Some other term ( Shouldnt have rocking on the second mystery coordinate..
 %but that makes it symmetric which it has to be. Looking into it

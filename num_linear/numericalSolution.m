@@ -66,7 +66,7 @@ function dx = odeFunLeft(t,x,params,IC)
 
 rocking = sign(IC(1));
 
-forcing = params(9)*cos(params(10)*t);
+forcing = params(9)*params(10)*cos(params(10)*t);
 dx1 = x(2);
 dx2 = params(1)*x(1) + params(2)*x(3) + params(3)*forcing + rocking*params(4);
 dx3 = x(4);
