@@ -1,5 +1,6 @@
 %% Numerical Solution Left Rocking (phi > 0)
 % TODO: Does psidot affect the block?
+% TODO: is it correct backwards flipping over opposite corner?
 
 clear all
 parameters
@@ -9,16 +10,16 @@ r  = 0.9;
 
 %IC = [a*(1+mu)/b*(1+2*mu); 0; 0.1;0]; Almost oscillatory.
 %IC = [params(4)/params(1),-0.01,-0.0291,0]; this too...
-IC = [ss- 0.5*ss,0,0,0];
+IC = [ ss - 0.5*ss,0,0,0];
 
 %How long do we wait for an impact?
-tLim = 10;
+tLim = 5;
 
 yTotal = [];
 tTotal = [];
 currentTime = 0;
 
-for i = 1:20
+for i = 1:10
     
     
     time = linspace(0,tLim,400);
@@ -28,7 +29,7 @@ for i = 1:20
     
     if isempty(crossTime)
         yTotal = [yTotal,y];
-        tTotal = [tTotal,tVec + currentTime];
+        tTotal = [tTotal,time + currentTime];
         fprintf('Block does not impact in %ds interval\n',tLim);
         break
     end
