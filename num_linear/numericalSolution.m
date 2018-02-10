@@ -1,6 +1,4 @@
 %% Numerical Solution Left Rocking (phi > 0)
-% TODO: Does psidot affect the block?
-% TODO: is it correct backwards flipping over opposite corner?
 
 clear all
 parameters
@@ -19,7 +17,7 @@ yTotal = [];
 tTotal = [];
 currentTime = 0;
 
-for i = 1:1
+for i = 1:10
     
     
     time = linspace(0,tLim,400);

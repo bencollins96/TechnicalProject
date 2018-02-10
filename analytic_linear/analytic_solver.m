@@ -1,10 +1,9 @@
 %%Analytic_composite
 
-%TODO: get resonance working. Could it be todo with the discontiunity in
-%time? YES YES YES! That is one problem, but also more...
+%TODO: Test rigorously for working with different frequencies + plot
+%forcing frequency.
 %TODO: Can break with r ~ 0.5 thanks to v. small steps, but i think thats
 %okay.
-%TODO: could the answer be the minus sign issues?
 
 clear all 
 parameters
@@ -14,16 +13,16 @@ r =0.9;
 
 tLim = 5;
 ss = -params(4)/params(1);
-IC = [ss-0.5*ss,0,0,0];
+IC = [ss-0.5*ss,0,0,0,0];
 yTotal = [];
 tTotal = [];
 currentTime = 0;
 
-for i = 1:1  
-    
+for i = 1:10  
+       
     %Find the crossing time, given "initial conditions"
     crossTime = getCrossTime(IC,tLim);
-    
+
     %Fixes case where block does not overturn
     if (crossTime == -1) 
         tVec = linspace(0,tLim,200);
@@ -38,20 +37,22 @@ for i = 1:1
     tVec = linspace(0,crossTime,200);
     y = analytic(IC,tVec);
     
-    %Initial conditions for next impact motion are end of the previous
-    IC = y(:,end)';
-    IC(2) = r*IC(2);
-    
-    %either introduce eps as error or set equal to zero and pass rocking sign as extra
-    %parameter.
-    IC(1) = sign(IC(2))*eps;
-    
     %Add solution to total solution.
     yTotal = [yTotal,y];
     tTotal = [tTotal,tVec + currentTime];
     
     %To match offest in times
     currentTime = currentTime + crossTime;
+    
+    %Initial conditions for next impact motion are end of the previous
+    IC = [y(:,end)',currentTime];
+    IC(2) = r*IC(2);
+    
+    
+    %either introduce eps as error or set equal to zero and pass rocking sign as extra
+    %parameter.
+    IC(1) = sign(IC(2))*eps;
+    
 end
 
 plot(tTotal,yTotal);
@@ -107,6 +108,9 @@ D = params(5); E = params(6);
 F = params(7); Q = params(8);
 beeta = params(9); omega = params(10); 
 
+%Forcing time 
+ft = t + IC(5);
+
 %Steady State for rocking around left corner.
 ss = -P/A;
 
@@ -139,11 +143,22 @@ E_omega = (E+omega^2);
 eigPoly = B*D -E_omega*A_omega;
 
 R_psi = (beeta*omega^2*(D*C - A_omega))/eigPoly;
+R_psiStart = R_psi*cos(omega*IC(5));
+dR_psi = -omega*R_psi;
+dR_psiStart = dR_psi*sin(omega*IC(5));
+
+
 R_phi = (C*beeta*omega^2 - B*R_psi)/A_omega;
+R_phiStart = R_phi*cos(omega*IC(5));
+dR_phi = -omega*R_phi;
+dR_phiStart = dR_phi*sin(omega*IC(5));
+
 
 %Transformed Initial Conditions
-phi_bar = phi_0 - sign(rocking)*ss - R_phi;
-psi_bar = psi_0 - R_psi;
+phi_bar = phi_0 - sign(rocking)*ss - R_phiStart;
+psi_bar = psi_0 - R_psiStart;
+dphi_0  = dphi_0 - dR_phiStart;
+dpsi_0  = dpsi_0 - dR_psiStart;
 
 %Integration pre-constants:
 A_1 = v_1(1); A_2 = v_3(1);
@@ -163,12 +178,11 @@ c_2 = (1/2)*((-dphi_0/A_3 + phi_bar/A_1) - (A_2/A_1)*A_12*(psi_bar - phi_bar/A_1
 c_1 = (1/2)*((dphi_0/A_3 + phi_bar/A_1) - (A_2/A_1)*A_12*(psi_bar - phi_bar/A_1)...
               - (A_4/A_3)*A_56*(dpsi_0/A_5 - dphi_0/A_3));
  
-forcingTerm = [R_phi*cos(omega*t);-R_phi*omega*sin(omega*t);...
-               R_psi*cos(omega*t);-R_psi*omega*sin(omega*t)];
+forcingTerm = [R_phi*cos(omega*ft);-R_phi*omega*sin(omega*ft);...
+               R_psi*cos(omega*ft);-R_psi*omega*sin(omega*ft)];
 
 y = c_1*v_1*exp(lambda_1*t) + c_2*v_2*exp(lambda_2*t) + c_3*v_3*exp(lambda_3*t) ...
     + c_4*v_4*exp(lambda_4*t) + forcingTerm + sign(rocking)*[ss;0;0;0];
-
 
 
 end
