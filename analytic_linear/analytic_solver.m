@@ -1,11 +1,12 @@
 %%Analytic_composite
 
-%TODO: get resonance working...
+%TODO: get resonance working. Could it be todo with the discontiunity in
+%time? YES YES YES! That is one problem, but also more...
 %TODO: Can break with r ~ 0.5 thanks to v. small steps, but i think thats
 %okay.
+%TODO: could the answer be the minus sign issues?
 
-clear all
-
+clear all 
 parameters
 
 %Angular Coefficient of Restitution
@@ -18,7 +19,7 @@ yTotal = [];
 tTotal = [];
 currentTime = 0;
 
-for i = 1:10   
+for i = 1:1  
     
     %Find the crossing time, given "initial conditions"
     crossTime = getCrossTime(IC,tLim);
@@ -133,9 +134,12 @@ v_3 = [-B/(A - lambda_3^2);-B*lambda_3/(A - lambda_3^2); 1; lambda_3];
 v_4 = [-B/(A - lambda_4^2);-B*lambda_4/(A - lambda_4^2); 1; lambda_4];
 
 %Initial forcing term:
-eigPoly = B*D -(E - omega^2)*(A + omega^2);
-R_phi = beeta*omega^2*(F*B - C*(E - omega^2))/eigPoly;
-R_psi = beeta*omega^2*(((F*B - C*(E - omega^2)*(A+omega^2))/(B*eigPoly))  - (C/B));
+A_omega = (A+omega^2);
+E_omega = (E+omega^2);
+eigPoly = B*D -E_omega*A_omega;
+
+R_psi = (beeta*omega^2*(D*C - A_omega))/eigPoly;
+R_phi = (C*beeta*omega^2 - B*R_psi)/A_omega;
 
 %Transformed Initial Conditions
 phi_bar = phi_0 - sign(rocking)*ss - R_phi;

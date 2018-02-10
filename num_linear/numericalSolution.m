@@ -19,7 +19,7 @@ yTotal = [];
 tTotal = [];
 currentTime = 0;
 
-for i = 1:10
+for i = 1:1
     
     
     time = linspace(0,tLim,400);
