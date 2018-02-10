@@ -3,6 +3,9 @@
 %no impacts.
 
 %TODO: Some trouble with small impacts....
+%TODO: IMPORTANT FORCING STOPS AND STARTS....IT NEEDS TO BE CONTINUOUS
+%ERROR ACROSS BOTH LINEAR AND NONLINEAR
+%TODO: make the equations autonomous should fix...
 
 clear all
 nonlinParameters
@@ -20,7 +23,7 @@ yTotal = [];
 tTotal = [];
 currentTime = 0;
 
-IC = [ss- 0.5*ss,0,0,0];
+IC = [ss- 0.5*ss,0,0,0,0];
 
 for i =1:10
     time = linspace(0,tLim,400);
@@ -53,14 +56,15 @@ for i =1:10
     
     %To match offset in times
     currentTime = currentTime + crossTime;
-    
-    i
 end
 
-plot(tTotal,yTotal);
-legend('phi','dphi','psi','dpsi');
+plot(tTotal,yTotal(:,1:4));
+hold on 
+plot(tTotal,beeta*cos(yTotal(:,5)));
+legend('phi','dphi','psi','dpsi','Forcing');
 xlabel('Time');
 ylabel('Angle');
+
 title('Numerical Solution - Nonlinear');
 grid on
 
@@ -68,8 +72,6 @@ function  dx=nonlinearODE(t,x,IC)
 %Steady state is [tan(a(1+mu)/b(1+2mu)),0,0,0];
 
 nonlinParameters
-
-
 
 %Rocking side:
 rocking = sign(IC(1));
@@ -86,7 +88,7 @@ massMatrix = [M*r_0^2 + m*r_1^2 + J, x_12;...
    
 %Forcing term
 forcing = [M*r_0*sin(theta_0 + rocking*x(1)) + m*r_1*sin(theta_1 + rocking*x(1)); -cos(x(3))*m*l];
-forcing = forcing.*(beeta*omega^2*cos(omega*t));
+forcing = forcing.*(-beeta*omega^2*cos(x(5)));
 
 %Some other term ( Shouldnt have rocking on the second mystery coordinate..
 %but that makes it symmetric which it has to be. Looking into it
@@ -103,6 +105,7 @@ dx24 = massMatrix\RHS;
 
 dx2 = dx24(1);
 dx4 = dx24(2);
+dx5 = omega;
 
-dx = [dx1;dx2;dx3;dx4];
+dx = [dx1;dx2;dx3;dx4;dx5];
 end

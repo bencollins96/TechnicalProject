@@ -10,7 +10,7 @@ r  = 0.9;
 
 %IC = [a*(1+mu)/b*(1+2*mu); 0; 0.1;0]; Almost oscillatory.
 %IC = [params(4)/params(1),-0.01,-0.0291,0]; this too...
-IC = [ ss - 0.5*ss,0,0,0];
+IC = [ ss - 0.5*ss,0,0,0,0];
 
 %How long do we wait for an impact?
 tLim = 5;
@@ -54,7 +54,9 @@ for i = 1:10
     currentTime = currentTime + crossTime;
 end
     
-plot(tTotal,yTotal);
+plot(tTotal,yTotal(:,1:4));
+hold on
+plot(tTotal,params(9)*cos(yTotal(:,5)));
 legend('phi','dphi','psi','dpsi');
 xlabel('Time');
 ylabel('Angle');
@@ -66,11 +68,14 @@ function dx = odeFunLeft(t,x,params,IC)
 
 rocking = sign(IC(1));
 
-forcing = params(9)*params(10)*cos(params(10)*t);
+time = x(5);
+
+forcing = -params(9)*params(10)^2*cos(time);
 dx1 = x(2);
 dx2 = params(1)*x(1) + params(2)*x(3) + params(3)*forcing + rocking*params(4);
 dx3 = x(4);
 dx4 = params(5)*x(1) + params(6)*x(3) + params(7)*forcing + rocking*params(8);
- 
-dx = [dx1;dx2;dx3;dx4];
+dx5 = params(10);
+
+dx = [dx1;dx2;dx3;dx4;dx5];
 end

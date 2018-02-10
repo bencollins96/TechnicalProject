@@ -12,31 +12,33 @@ phi  = y(1);
 dphi = y(2);
 psi  = y(3);
 dpsi = y(4);
+time = y(5);
+
 
 %Vector field in region S1 (H > 0)
-forcing = params(9)*cos(params(10)*t);
+forcing = -beeta*omega^2*cos(time);
 dx1 = dphi;
 dx2 = params(1)*phi + params(2)*psi + params(3)*forcing + params(4);
 dx3 = dpsi;
 dx4 = params(5)*phi + params(6)*psi + params(7)*forcing + params(8);
- 
-F1 = [dx1;dx2;dx3;dx4];
+dx5 = omega;
+F1 = [dx1;dx2;dx3;dx4;dx5];
 
 % Vector field in region S2 (H < 0)
-forcing = params(9)*cos(params(10)*t);
+forcing = -beeta*omega^2*cos(time);
 dx1 = dphi;
 dx2 = params(1)*phi + params(2)*psi + params(3)*forcing - params(4);
 dx3 = dpsi;
 dx4 = params(5)*phi + params(6)*psi + params(7)*forcing - params(8);
- 
-F2 = [dx1;dx2;dx3;dx4];
+dx5 = omega;
+F2 = [dx1;dx2;dx3;dx4;dx5];
 
 
 % Function defining the discontinuity surface (H = 0)
 H = phi;
 
 % The vector normal to the switching manifold dH = grad(H);
-dH =[1,eps,eps,eps]; %Something to do with this! Add an eps..
+dH =[1,eps,eps,eps,0]; %Something to do with this! Add an eps..
 
 % Poincare section
 h =0; 

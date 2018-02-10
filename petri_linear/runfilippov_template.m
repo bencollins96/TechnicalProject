@@ -32,16 +32,18 @@ ss = -params(4)/params(1);
 
 % Problem IC y0 = [ss,0,0.01,0,0];
 % Initial condition
-y0 = [-ss - 0.5*ss,0,0,0];
+y0 = [ss - 0.5*ss,0,0,0,0];
 
 % Integration time
-T = 2.75; %10 oscillations periods
+T = 6; %10 oscillations periods
 tspan = [0,T];
 
 % Output is the time, states and events as in Matlab's standard output
 [t,y,te,ye,ie,se] = filippov(vfields,jacobians,pfunction,solver,tspan,y0,params,C,opts);
 
-plot(t,y)
+plot(t,y(:,1:4))
+hold on 
+plot(t,beeta*cos(y(:,5)));
 legend('phi','dphi','psi','dpsi');
 title('Petri linear');
 xlabel('Time,t');

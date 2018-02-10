@@ -1,8 +1,6 @@
 %%Analytic_composite
 
-%TODO: want to define a function that gives me position of block...
-%TODO: Dodgy things happen can happen, system seems to gain energy...
-%TODO: unless problem with linearising...
+%TODO: get resonance working...
 %TODO: Can break with r ~ 0.5 thanks to v. small steps, but i think thats
 %okay.
 
@@ -13,14 +11,14 @@ parameters
 %Angular Coefficient of Restitution
 r =0.9;
 
-tLim = 10;
+tLim = 5;
 ss = -params(4)/params(1);
 IC = [ss-0.5*ss,0,0,0];
 yTotal = [];
 tTotal = [];
 currentTime = 0;
 
-for i = 1:10    
+for i = 1:10   
     
     %Find the crossing time, given "initial conditions"
     crossTime = getCrossTime(IC,tLim);
@@ -106,7 +104,7 @@ A = params(1); B = params(2);
 C = params(3); P = params(4);
 D = params(5); E = params(6);
 F = params(7); Q = params(8);
-beta = params(9); omega = params(10); 
+beeta = params(9); omega = params(10); 
 
 %Steady State for rocking around left corner.
 ss = -P/A;
@@ -136,9 +134,8 @@ v_4 = [-B/(A - lambda_4^2);-B*lambda_4/(A - lambda_4^2); 1; lambda_4];
 
 %Initial forcing term:
 eigPoly = B*D -(E - omega^2)*(A + omega^2);
-R_phi = beta*omega^2*(F*B - C*(E - omega^2))/eigPoly;
-R_psi = beta*omega^2*((F*B - C*(E - omega^2)*(A+omega^2))/(B*eigPoly)  - (C/B));
-
+R_phi = beeta*omega^2*(F*B - C*(E - omega^2))/eigPoly;
+R_psi = beeta*omega^2*(((F*B - C*(E - omega^2)*(A+omega^2))/(B*eigPoly))  - (C/B));
 
 %Transformed Initial Conditions
 phi_bar = phi_0 - sign(rocking)*ss - R_phi;
@@ -161,11 +158,14 @@ c_2 = (1/2)*((-dphi_0/A_3 + phi_bar/A_1) - (A_2/A_1)*A_12*(psi_bar - phi_bar/A_1
           
 c_1 = (1/2)*((dphi_0/A_3 + phi_bar/A_1) - (A_2/A_1)*A_12*(psi_bar - phi_bar/A_1)...
               - (A_4/A_3)*A_56*(dpsi_0/A_5 - dphi_0/A_3));
+ 
+forcingTerm = [R_phi*cos(omega*t);-R_phi*omega*sin(omega*t);...
+               R_psi*cos(omega*t);-R_psi*omega*sin(omega*t)];
 
 y = c_1*v_1*exp(lambda_1*t) + c_2*v_2*exp(lambda_2*t) + c_3*v_3*exp(lambda_3*t) ...
-    + c_4*v_4*exp(lambda_4*t) + [R_phi; 0; R_psi;0]*cos(omega*t) + sign(rocking)*[ss;0;0;0];
+    + c_4*v_4*exp(lambda_4*t) + forcingTerm + sign(rocking)*[ss;0;0;0];
 
-y =y + [0;R_phi;0;R_psi]*omega*sin(omega*t);
+
 
 end
 

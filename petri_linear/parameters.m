@@ -6,7 +6,7 @@ mu = 0.5;
 a =0.001;
 b = 1;
 l = 0.5;
-beta = 0;
+beeta = 0.0001;
 omega = 10;
 
 %Equation Constants:
@@ -25,4 +25,4 @@ F = (2*b^2 - a^2*(3*mu + 4))/(3*g*l);
 Q = -(2*a*b*(1+mu))/l;
 
 constants = I.*[A,B,C,P,D,E,F,Q];
-params = [constants,beta,omega];
+params = [constants,beeta,omega];
