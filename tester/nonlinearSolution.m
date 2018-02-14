@@ -3,9 +3,6 @@
 
 %TODO: Some trouble with small impacts....
 
-
-clear all
-
 %Import parameters.
 parameters
 
@@ -39,7 +36,7 @@ for i =1:numImpacts
     %Solve up to crossTime  additional eps to make sure solved up to
     %crossing time... slightly dodgy.
     tVec = linspace(0,crossTime + 200*eps,200);
-    [t,y,crossTime,ye,ie] = ode45(@(t,x)nonlinearODE(t,x,IC),tVec,IC,options);
+    [t,y,te,ye,ie] = ode45(@(t,x)nonlinearODE(t,x,IC),tVec,IC,options);
      
     %New initial conditions are end conditions of previous
     IC = y(end,:);

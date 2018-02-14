@@ -6,8 +6,6 @@
 %          3) Add this solution to yTotal, 
 %          4) solve equations up to next impact time and repeat.
 
-
-clear all
 parameters
 
 ss = -P/A;
@@ -33,7 +31,7 @@ for i = 1:numImpacts
     
     %if there is no impact stop simulation 
     if isempty(crossTime)
-        yTotal = [yTotal,y];
+        yTotal = [yTotal;y];
         tTotal = [tTotal,time + currentTime];
         fprintf('Block does not impact in %ds interval\n',tLim);
         break
@@ -61,9 +59,8 @@ for i = 1:numImpacts
     currentTime = currentTime + crossTime;
 end
     
-plot(tTotal,yTotal(:,1:4));
+plot(tTotal,yTotal(:,1:4),'r');
 hold on
-plot(tTotal,beeta*cos(yTotal(:,5)));
 legend('phi','dphi','psi','dpsi');
 xlabel('Time');
 ylabel('Angle');
