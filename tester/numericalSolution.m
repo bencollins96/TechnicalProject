@@ -6,9 +6,11 @@
 %          3) Add this solution to yTotal, 
 %          4) solve equations up to next impact time and repeat.
 
-parameters
 
-ss = -P/A;
+function [tTotal,yTotal] = numericalSolution
+params = parameters;
+
+ss = -params.P/params.A;
 
 %IC = [a*(1+mu)/b*(1+2*mu); 0; 0.1;0]; Almost oscillatory.
 %IC = [params(4)/params(1),-0.01,-0.0291,0]; this too...
@@ -16,13 +18,12 @@ IC = [ ss - 0.5*ss,0,0,0,0];
 
 %How long do we wait for an impact?
 tLim = 5;
-numImpacts = 10;
 
 yTotal = [];
 tTotal = [];
 currentTime = 0;
 
-for i = 1:numImpacts
+for i = 1:params.numImpacts
     
     %Calculate the impact time.
     time = linspace(0,tLim,400);
@@ -46,7 +47,7 @@ for i = 1:numImpacts
     IC = y(end,:);
     
     %reduce dphi by factor of r
-    IC(2) = r*IC(2);
+    IC(2) = params.r*IC(2);
    
     %Ensure that system starts on the correct corner. 
     IC(1) = sign(IC(2))*eps;
@@ -59,30 +60,24 @@ for i = 1:numImpacts
     currentTime = currentTime + crossTime;
 end
     
-plot(tTotal,yTotal(:,1:4),'r');
-hold on
-legend('phi','dphi','psi','dpsi');
-xlabel('Time');
-ylabel('Angle');
-title('Numerical Solution - Linearised');
-grid on
-
 
 function dx = odeFunLeft(t,x,IC)
 
-parameters
+params= parameters();
 
 rocking = sign(IC(1));
     
 %Time for forcing, autonomous equations: extra variable.
-time = x(5);
+forcingTime = x(5);
 
-forcing = -beeta*omega^2*cos(time);
+forcing = -params.beeta*params.omega^2*cos(forcingTime);
 dx1 = x(2);
-dx2 = A*x(1) + B*x(3) + C*forcing + rocking*P;
+dx2 = params.A*x(1) + params.B*x(3) + params.C*forcing + rocking*params.P;
 dx3 = x(4);
-dx4 = D*x(1) + E*x(3) + F*forcing + rocking*Q;
-dx5 = omega;
+dx4 = params.D*x(1) + params.E*x(3) + params.F*forcing + rocking*params.Q;
+dx5 = params.omega;
 
 dx = [dx1;dx2;dx3;dx4;dx5];
+end
+
 end

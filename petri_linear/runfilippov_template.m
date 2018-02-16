@@ -1,10 +1,6 @@
 %TODO: doesnt work for all initial conditions... 
-%TODO: sometimes stops prematurely and gives NaNs (Gets through the impact
-%then same two values and then NaN's , always one same initial one.. I
-%think it is something to do with escaping to infinity...
-%very much hope not error in maths...
-%
-%TODO: sometimes it gives horzcat errors in ODE45 (FIXED by eps)
+%TODO: how do error tolerances affect results?
+%TODO: can have that miss impact if occurs very soon after previous.
 
 % ODE solver
 solver = 'ode45';
@@ -35,7 +31,7 @@ ss = -params(4)/params(1);
 y0 = [ss - 0.5*ss,0,0,0,0];
 
 % Integration time
-T = 6; %10 oscillations periods
+T = 2; %10 oscillations periods
 tspan = [0,T];
 
 % Output is the time, states and events as in Matlab's standard output
