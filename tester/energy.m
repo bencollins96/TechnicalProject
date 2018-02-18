@@ -1,11 +1,17 @@
 function eTotal = energy(t,y,params)
-
+%Block Kinetic, Pendulum Kinetic, Block Potential, Pendulum Potential]
 numEl = size(y,1);
 
 eTotal = [];
 for i =1:numEl
     eTotal = [eTotal,potKin(y(i,:),t(i),params)];
 end
+
+eTotal = eTotal';
+
+%Normalise? remove potential energy of upright block.
+eTotal(:,3) = eTotal(:,3) - params.M*params.g*params.b;
+eTotal(:,4) = eTotal(:,4) - params.m*params.g*(2*params.b-params.l);
 
     function E = potKin(y,t,params)
         
@@ -15,8 +21,8 @@ end
         dpsi = y(4);
         
         rocking = sign(phi);
-        xdot = -params.beeta*params.omega*sin(params.omega*t);
         
+        %xdot = -params.beeta*params.omega*sin(params.omega*t);
         %T_b = (M/2)*(xdot^2 -2*r_0*xdot*y(2)*sin(rocking*y(1) + theta_0) + (r_0^2*y(2)^2)) + (J/2)*y(2)^2;
         
         %T_p = (m/2)*(xdot^2 -2*r_1*xdot*y(2)*sin(rocking*y(1) + theta_1) + 2*l*xdot*y(4)*cos(y(3)) ...
@@ -24,7 +30,7 @@ end
                  
         V_b = params.M*params.g*params.r_0*sin(rocking*phi + params.theta_0);
         
-        V_m = params.m*params.g*(params.r_1*sin(params.theta_1 + rocking*phi) - params.l*cos(psi));
+        V_p = params.m*params.g*(params.r_1*sin(params.theta_1 + rocking*phi) - params.l*cos(psi));
         
         %w/o forcing...
          T_b = (params.M/2)*((params.r_0^2*dphi^2)) + (params.J/2)*dphi^2;
@@ -32,7 +38,7 @@ end
          T_p = (params.m/2)*(-2*params.r_1*params.l*dpsi*dphi*sin(params.theta_1 + rocking*(phi - psi))...
                 + (params.l*dpsi)^2 + (params.r_1*dphi)^2);
         
-        E = T_b + T_p + V_b + V_m;
+        E = [T_b; T_p; V_b; V_p];
       
     end
 

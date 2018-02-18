@@ -1,6 +1,6 @@
 %% Params file 
 
-function params= parameters()
+function params= parameters(omega)
 
 params = struct();
 
@@ -12,8 +12,9 @@ mu = m/M;           params.mu = mu;
 a = 0.01;           params.a =a;
 b = 1;              params.b = b;
 l = 0.75;           params.l = l;
-beeta = 0.001;     params.beeta = beeta;
-omega = 10;         params.omega = omega;
+beeta = 0.0005;     params.beeta = beeta;
+%omega = 10; 
+params.omega = omega;
 r = 0.9;            params.r = r;
 numImpacts = 10;    params.numImpacts = numImpacts;
 
@@ -32,5 +33,8 @@ D = (2*I*(b^2)*(1+2*mu))/l;              params.D = D;
 E = -I*(3*mu*r_1^2 + 4*r_0^2)/(3*l);     params.E = E;
 F = I*(2*b^2 - a^2*(3*mu + 4))/(3*g*l);  params.F = F;
 Q = -I*(2*a*b*(1+mu))/l;                 params.Q = Q;
+
+resonant = (1/sqrt(2))*sqrt(E+A + sqrt((E+A)^2 -4*(A*E - B*D)));
+params.resonant = resonant;
 
 end

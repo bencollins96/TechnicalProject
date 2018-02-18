@@ -6,38 +6,50 @@
 %okay.
 %initial conditions are wrong
 
-function [tTotal,yTotal] = analyticSolver(IC)
+function [tTotal,yTotal,impact ] = analytic_solver(IC,params,tSpan)
 
-params = parameters;
-
-%Angular Coefficient of Restitution
-r =0.9;
 
 tLim = 5;
-steady = -params.P/params.A;
-%IC = [0.5*steady,0,0,0,0];
 yTotal = [];
 tTotal = [];
 currentTime = 0;
+stop = 0;
+impact =1;
 
-for i = 1:params.numImpacts 
-       
+while ~stop
+    
+    timeToEnd = tSpan  - currentTime;
+    if timeToEnd < tLim
+        crossTime = getCrossTime(IC,timeToEnd,params);
+        if crossTime == -1
+            timeVec = linspace(0,timeToEnd,200);
+            yEnd = analytic(IC,timeVec,params);
+            yTotal = [yTotal,yEnd];
+            tTotal = [tTotal,timeVec + currentTime];
+            stop = 1;
+            break
+        end
+    end
+            
+
     %Find the crossing time, given "initial conditions"
-    crossTime = getCrossTime(IC,tLim);
+    crossTime = getCrossTime(IC,tLim,params);
 
     %Fixes case where block does not overturn
     if (crossTime == -1) 
         timeVec = linspace(0,tLim,200);
-        ySolNoImpact = analytic(IC,timeVec);
+        ySolNoImpact = analytic(IC,timeVec,params);
         yTotal = [yTotal,ySolNoImpact];
         tTotal = [tTotal,timeVec + currentTime];
+        impact = 0;
+        error('Block overturned');
         break
     end
         
     
     %Solve the solution up to the crossing time.
     t = linspace(0,crossTime,200);
-    ySol = analytic(IC,t);
+    ySol = analytic(IC,t,params);
     
     %Add solution to total solution.
     yTotal = [yTotal,ySol];
@@ -55,19 +67,22 @@ for i = 1:params.numImpacts
     %parameter.
     IC(1) = sign(IC(2))*eps;
     
+    IC = real(IC);
+    
 end
 
 yTotal = yTotal';
+tTotal = tTotal';
 
 
-function crossTime =  getCrossTime(IC,tLim)
+function crossTime =  getCrossTime(IC,tLim,params)
 
   %Initial rocking sign
   initSign = sign(IC(1));
   tVec = linspace(0,tLim,1000);
   
   %Solution up to time limit
-  y = analytic(IC,tVec);
+  y = analytic(IC,tVec,params);
   
   %Which side is the block on?
   signVec = sign(y(1,:));
@@ -78,26 +93,24 @@ function crossTime =  getCrossTime(IC,tLim)
   
   %If no impact, do special things
   if(isempty(timeImpact))
-      fprintf('Block does not impact in %ds interval\n',tLim);
+      %fprintf('Block does not impact in %ds interval\n',tLim);
       crossTime = -1;
       return
   end
     
   %Gives error if escapes bounds. want to catch.
   options = optimset('Tolx',eps);
-  crossTime = fzero(@(t)phiAngle(IC,t),timeImpact,options);
+  crossTime = fzero(@(t)phiAngle(IC,t,params),timeImpact,options);
   
-
-end
-
-function phiAng = phiAngle(IC,t)
-    angles = analytic(IC,t);
+  function phiAng = phiAngle(IC,t,params)
+    angles = analytic(IC,t,params);
     phiAng = angles(1,:);
+  end
+
 end
 
-function y = analytic(IC,t)
 
-params = parameters;
+function y = analytic(IC,t,params)
 
 A = params.A; B = params.B;
 C = params.C; P = params.P;

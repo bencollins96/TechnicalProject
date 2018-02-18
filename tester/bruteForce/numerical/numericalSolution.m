@@ -7,8 +7,7 @@
 %          4) solve equations up to next impact time and repeat.
 
 
-function [tTotal,yTotal] = numericalSolution(IC)
-params = parameters;
+function [tTotal,yTotal] = numericalSolution(IC,tSpan,params)
 
 ss = -params.P/params.A;
 
@@ -22,13 +21,34 @@ tLim = 5;
 yTotal = [];
 tTotal = [];
 currentTime = 0;
-
-for i = 1:params.numImpacts
+stop = 0;
+while ~stop
+    
+    timeToEnd = tSpan - currentTime;
+    
+    if timeToEnd < tLim 
+        time = linspace(0,timeToEnd,400);
+        options = odeset('Events',@eventFcn,'RelTol',1e-13,'AbsTol',1e-15);
+        [tEnd,yEnd,crossTime,ye,ie] = ode45(@(t,x)odeFunLeft(t,x,IC,params),time, IC,options);
+        
+        if isempty(crossTime)
+            yTotal = [yTotal;yEnd];
+            size(tTotal)
+            size(tEnd)
+            tTotal = [tTotal,time + currentTime];
+            stop = 1;
+            break
+        end
+    end
     
     %Calculate the impact time.
     time = linspace(0,tLim,400);
     options = odeset('Events',@eventFcn,'RelTol',1e-13,'AbsTol',1e-15);
-    [t,y,crossTime,ye,ie] = ode45(@(t,x)odeFunLeft(t,x,IC),time, IC,options);
+    [t,y,crossTime,ye,ie] = ode45(@(t,x)odeFunLeft(t,x,IC,params),time, IC,options);
+    
+    
+    
+    
     
     %if there is no impact stop simulation 
     if isempty(crossTime)
@@ -41,7 +61,7 @@ for i = 1:params.numImpacts
     %Solve equations up to crossTime
     tVec = linspace(0,crossTime,200);
     options = odeset('Events',@eventFcn,'RelTol',1e-13,'AbsTol',1e-15);
-    [t,y,te,ye,ie] = ode45(@(t,x)odeFunLeft(t,x,IC),tVec, IC,options);
+    [t,y,te,ye,ie] = ode45(@(t,x)odeFunLeft(t,x,IC,params),tVec, IC,options);
     
     %Initial Conditions for cycle are end conditions of previous
     IC = y(end,:);
@@ -61,9 +81,7 @@ for i = 1:params.numImpacts
 end
     
 
-function dx = odeFunLeft(t,x,IC)
-
-params= parameters();
+function dx = odeFunLeft(t,x,IC,params)
 
 rocking = sign(IC(1));
     

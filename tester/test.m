@@ -7,32 +7,37 @@ clear all
 close all
 
 params = parameters;
-
+ss = -params.P/params.A;
 hold on
-    
+
+%Pair of IC's the second is just before the block impacts and gains energy.
+IC = [0.5*atan(ss),0,0,0,0];
+%IC = [-0.000837527713308   0.003608861603395  -0.008567754539536   0.034697155305504   5.008784622272890];
+
 %test nonlinear
 fprintf('Testing numerical nonlinear...\n');
-[tTotal1,yTotal1] =nonlinearSolution;
+[tTotal1,yTotal1] =nonlinearSolution(IC);
 eTotal1 = energy(tTotal1,yTotal1,params);
 
 %test numerical
 fprintf('Testing numerical linear...\n');
-[tTotal2,yTotal2] = numericalSolution;
+[tTotal2,yTotal2] = numericalSolution(IC);
 eTotal2 = energy(tTotal2,yTotal2,params);
 
 %test petri
 fprintf('Testing Petri linear version ...\n');
-[tTotal3,yTotal3] = runfilippov;
+[tTotal3,yTotal3] = runfilippov(IC);
 eTotal3 = energy(tTotal3,yTotal3,params);
 
 %test Analytic
 fprintf('Testing Analytic linear...\n');
-[tTotal4,yTotal4] = analytic_solver;
+[tTotal4,yTotal4] = analytic_solver(IC);
 eTotal4  = energy(tTotal4,yTotal4,params);
 
 
 %Plotting
 %Plot the time series.
+figure(1)
 subplot(2,1,1)
 hold on
 
@@ -51,7 +56,36 @@ ylabel('Angle/Angular velocity');
 
 %Plot the energy of the systems
 subplot(2,1,2)
-plot(tTotal1,eTotal1,tTotal2,eTotal2,tTotal3(1:iEnd),eTotal3(1:iEnd),tTotal4,eTotal4);
+plot(tTotal1,sum(eTotal1,2),tTotal2,sum(eTotal2,2),tTotal3(1:iEnd),sum(eTotal3(1:iEnd),2),tTotal4,sum(eTotal4,2));
 title('Energy');
 xlabel('Time');
 ylabel('Energy');
+axis([1.1*min(tTotal1),1.1*max(tTotal1),1.1*min(sum(eTotal1,2)),1.1*max(sum(eTotal1,2))]);
+
+energyGain(yTotal1(200,:))
+sum(eTotal2(200,1:4)) - sum(eTotal2(201,1:4))
+energyGain(yTotal2(200,:))
+
+%Plot the individual energies
+figure(2)
+subplot(2,2,1)
+plot(tTotal1,eTotal1(:,1))
+xlabel('Time');
+ylabel('Block Kinetic Energy');
+
+subplot(2,2,2)
+plot(tTotal1,eTotal1(:,2))
+xlabel('Time');
+ylabel('Pendulum Kinetic Energy');
+
+subplot(2,2,3)
+plot(tTotal1,eTotal1(:,3))
+xlabel('Time');
+ylabel('Block Potential Energy');
+
+subplot(2,2,4)
+plot(tTotal1,eTotal1(:,4))
+xlabel('Time');
+ylabel('Pendulum Potential Energy');
+
+

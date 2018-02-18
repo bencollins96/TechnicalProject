@@ -29,6 +29,7 @@ dx4 = params.D*phi + params.E*psi + params.F*forcing - params.Q;
 dx5 = params.omega;
 F2 = [dx1;dx2;dx3;dx4;dx5];
 
+
 % Function defining the discontinuity surface (H = 0)
 H = phi;
 
@@ -36,6 +37,7 @@ H = phi;
 dH =[1,eps,eps,eps,0]; %Something to do with this! Add an eps..
 
 % Poincare section
-h = 0;
+h = mod(dx5, 2*pi);
+
 % Direction of location for Poincare section
 hdir = 1;
