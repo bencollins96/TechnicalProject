@@ -12,12 +12,16 @@ hold on
 
 %Pair of IC's the second is just before the block impacts and gains energy.
 IC = [0.5*atan(ss),0,0,0,0];
-%IC = [-0.000837527713308   0.003608861603395  -0.008567754539536   0.034697155305504   5.008784622272890];
+tSpan = 11;
 
 %test nonlinear
 fprintf('Testing numerical nonlinear...\n');
-[tTotal1,yTotal1] =nonlinearSolution(IC);
+[tTotal1,yTotal1] =nonlinearSolution(IC,params,tSpan);
 eTotal1 = energy(tTotal1,yTotal1,params);
+
+plot(tTotal1,yTotal1(:,1:4));
+
+return
 
 %test numerical
 fprintf('Testing numerical linear...\n');

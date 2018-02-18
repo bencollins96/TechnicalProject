@@ -1,13 +1,9 @@
 %% Numerical solution of Nonlinear equations
 
 %TODO: some trouble with energy.
-function [tTotal,yTotal] = nonlinearSolution(IC)
 
-%Import parameters.
-params = parameters;
 
-%steady state
-ss = atan(-params.P/params.A);
+function [tTotal,yTotal] = nonlinearSolution(IC,params,tSpan)
 
 %How long do we wait for an impact?
 tLim = 5;
@@ -15,11 +11,27 @@ tLim = 5;
 yTotal = [];
 tTotal = [];
 currentTime = 0;
+stop =  0;
 
-%IC = [ss- 0.5*ss,0,0,0,0];
-
-for i =1:params.numImpacts
+while ~stop
     
+    timeToEnd = tSpan - currentTime;
+    
+    %Solve in (maybe) final interval
+    if timeToEnd < tLim
+        time = linspace(0,timeToEnd,400);
+        options = odeset('Events',@eventFcn,'RelTol',1e-13,'AbsTol',1e-15);
+        [tEnd,yEnd,crossTime,ye,ie] = ode45(@(t,x)nonlinearODE(t,x,IC),time,IC,options);
+        
+        %If no impacts in this final interval add solution and exit.
+        if isempty(crossTime)
+            yTotal = [yTotal;yEnd];
+            tTotal = [tTotal, time + currentTime];
+            stop = 1;
+            break
+        end
+    end
+            
     %Calculate the impact time if one occurs
     time = linspace(0,tLim,400);
     options = odeset('Events',@eventFcn,'RelTol',1e-13,'AbsTol',1e-15);
@@ -36,7 +48,7 @@ for i =1:params.numImpacts
     %Solve up to crossTime  additional eps to make sure solved up to
     %crossing time... slightly dodgy.
     tVec = linspace(0,crossTime + 200*eps,200);
-    [t,y,te,ye,ie] = ode45(@(t,x)nonlinearODE(t,x,IC),tVec,IC,options);
+    [t,y,te,ye,ie] = ode45(@(t,x)nonlinearODE(t,x,IC,params),tVec,IC,options);
      
     %New initial conditions are end conditions of previous
     IC = y(end,:);
@@ -55,7 +67,7 @@ for i =1:params.numImpacts
     currentTime = currentTime + crossTime;
 end
 
-function  dx=nonlinearODE(t,x,IC)
+function  dx=nonlinearODE(t,x,IC,params)
 %Steady state is [tan(a(1+mu)/b(1+2mu)),0,0,0];
 
 params = parameters;
