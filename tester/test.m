@@ -29,17 +29,20 @@ fprintf('Testing Petri linear version ...\n');
 [tTotal3,yTotal3] = runfilippov(IC,params,tSpan);
 eTotal3 = energy(tTotal3,yTotal3,params);
 
+
+%test Analytic
+fprintf('Testing Analytic linear...\n');
+[tTotal4,yTotal4] = analytic_solver(IC,params,tSpan);
+eTotal4  = energy(tTotal4,yTotal4,params);
+
+
 plot(tTotal1,yTotal1(:,1:4));
 hold on
 plot(tTotal2,yTotal2(:,1:4));
 plot(tTotal3,yTotal3(:,1:4));
+plot(tTotal4,yTotal4(:,1:4));
 
 return
-
-%test Analytic
-fprintf('Testing Analytic linear...\n');
-[tTotal4,yTotal4] = analytic_solver(IC);
-eTotal4  = energy(tTotal4,yTotal4,params);
 
 
 
