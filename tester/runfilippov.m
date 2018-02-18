@@ -9,7 +9,7 @@
 %closer then escape to infinity... but undetected..... maybe check time
 %between impacts is greater than max step?
 
-function [tTotal,yTotal] = runfilippov(y0)
+function [tTotal,yTotal] = runfilippov(y0,params,tSpan)
 
 % ODE solver
 solver = 'ode45';
@@ -30,18 +30,9 @@ pfunction = 'pfunction_template';
 % Filippov parameter
 C = 1;
 
-% Parameters: params =[A,B,C,P,D,E,F,Q,beta,omega];
-params = parameters;
-
-ss = -params.P/params.A;
-
-% Problem IC y0 = [ss,0,0.01,0,0];
-% Initial condition
-%y0 = [0.5*ss,0,0,0,0];
-
 % Integration time
 %T = 60*(2*pi/omega); %10 oscillations periods
-tspan = [0,6];
+tspan = [0,tSpan];
 
 
 % Output is the time, states and events as in Matlab's standard output
