@@ -17,6 +17,7 @@ tTotal = [];
 currentTime = 0;
 stop = 0;
 
+params.r
 while ~stop
     
     tToEnd = tSpan - currentTime;

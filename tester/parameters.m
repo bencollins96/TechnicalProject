@@ -12,9 +12,9 @@ mu = m/M;           params.mu = mu;
 a = 0.01;           params.a =a;
 b = 1;              params.b = b;
 l = 0.75;           params.l = l;
-beeta = 0.001;     params.beeta = beeta;
+beeta = 0;     params.beeta = beeta;
 omega = 10;         params.omega = omega;
-r = 0.9;            params.r = r;
+r = 1;            params.r = r;
 numImpacts = 10;    params.numImpacts = numImpacts;
 
 %Equation Constants:

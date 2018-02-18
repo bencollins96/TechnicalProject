@@ -1,0 +1,21 @@
+# The rocking block
+
+
+dw/dt=x
+dx/dt=A*w+B*y+C*i(t)+h(w)*P
+dy/dt=z
+dz/dt=D*w+E*y+F*i(t)+h(w)*Q
+#where
+i(t)=-beeta*omega*omega*cos(omega*t)
+h(w) = sign(w)
+#and
+param A=14.712976965667224,B=-7.356488482833612,C=0.749896889177738,P=-0.110347327242504
+param D=39.234605241779263,E=-32.697302620889637,F=0.666391704473968,Q=-0.294259539313344
+param beeta=0,omega=10
+
+w(0)=0.007500
+x(0)=0
+y(0)=0
+z(0)=0
+done
+
