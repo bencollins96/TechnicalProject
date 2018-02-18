@@ -19,14 +19,16 @@ fprintf('Testing numerical nonlinear...\n');
 [tTotal1,yTotal1] =nonlinearSolution(IC,params,tSpan);
 eTotal1 = energy(tTotal1,yTotal1,params);
 
-plot(tTotal1,yTotal1(:,1:4));
-
-return
-
 %test numerical
 fprintf('Testing numerical linear...\n');
-[tTotal2,yTotal2] = numericalSolution(IC);
+[tTotal2,yTotal2] = numericalSolution(IC,params,tSpan);
 eTotal2 = energy(tTotal2,yTotal2,params);
+
+plot(tTotal1,yTotal1(:,1:4));
+hold on
+plot(tTotal2,yTotal2(:,1:4));
+
+return
 
 %test petri
 fprintf('Testing Petri linear version ...\n');

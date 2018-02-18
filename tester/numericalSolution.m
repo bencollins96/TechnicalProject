@@ -7,14 +7,7 @@
 %          4) solve equations up to next impact time and repeat.
 
 
-function [tTotal,yTotal] = numericalSolution(IC)
-params = parameters;
-
-ss = -params.P/params.A;
-
-%IC = [a*(1+mu)/b*(1+2*mu); 0; 0.1;0]; Almost oscillatory.
-%IC = [params(4)/params(1),-0.01,-0.0291,0]; this too...
-%IC = [ ss - 0.5*ss,0,0,0,0];
+function [tTotal,yTotal] = numericalSolution(IC,params,tSpan)
 
 %How long do we wait for an impact?
 tLim = 5;
@@ -22,18 +15,35 @@ tLim = 5;
 yTotal = [];
 tTotal = [];
 currentTime = 0;
+stop = 0;
 
-for i = 1:params.numImpacts
+while ~stop
+    
+    tToEnd = tSpan - currentTime;
+    
+    if tToEnd < tLim
+        time = linspace(0,tToEnd,400);
+        options = odeset('Events',@eventFcn,'RelTol',1e-13,'AbsTol',1e-15);
+        [tEnd,yEnd,crossTime,~,~] = ode45(@(t,x)rockingBLockEq(t,x,IC,params),time, IC,options);  
+        
+        if isempty(crossTime)
+            yTotal = [yTotal;yEnd];
+            tTotal = [tTotal;tEnd+ currentTime];
+            stop = 1;
+            break
+        end
+    end
+        
     
     %Calculate the impact time.
     time = linspace(0,tLim,400);
     options = odeset('Events',@eventFcn,'RelTol',1e-13,'AbsTol',1e-15);
-    [t,y,crossTime,ye,ie] = ode45(@(t,x)odeFunLeft(t,x,IC),time, IC,options);
+    [t,y,crossTime,~,~] = ode45(@(t,x)rockingBLockEq(t,x,IC,params),time, IC,options);
     
     %if there is no impact stop simulation 
     if isempty(crossTime)
         yTotal = [yTotal;y];
-        tTotal = [tTotal,time + currentTime];
+        tTotal = [tTotal;t + currentTime];
         fprintf('Block does not impact in %ds interval\n',tLim);
         break
     end
@@ -41,7 +51,7 @@ for i = 1:params.numImpacts
     %Solve equations up to crossTime
     tVec = linspace(0,crossTime,200);
     options = odeset('Events',@eventFcn,'RelTol',1e-13,'AbsTol',1e-15);
-    [t,y,te,ye,ie] = ode45(@(t,x)odeFunLeft(t,x,IC),tVec, IC,options);
+    [t,y,te,~,~] = ode45(@(t,x)rockingBLockEq(t,x,IC,params),tVec, IC,options);
     
     %Initial Conditions for cycle are end conditions of previous
     IC = y(end,:);
@@ -54,16 +64,14 @@ for i = 1:params.numImpacts
     
     %Add solution to total solution
     yTotal = [yTotal;y];
-    tTotal = [tTotal,tVec + currentTime];
+    tTotal = [tTotal;t + currentTime];
     
     %To match offset in times
     currentTime = currentTime + crossTime;
 end
     
 
-function dx = odeFunLeft(t,x,IC)
-
-params= parameters();
+function dx = rockingBLockEq(t,x,IC,params)
 
 rocking = sign(IC(1));
     

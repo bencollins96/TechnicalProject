@@ -26,7 +26,7 @@ while ~stop
         %If no impacts in this final interval add solution and exit.
         if isempty(crossTime)
             yTotal = [yTotal;yEnd];
-            tTotal = [tTotal, time + currentTime];
+            tTotal = [tTotal; tEnd + currentTime];
             stop = 1;
             break
         end
@@ -40,7 +40,7 @@ while ~stop
     %if none occurs, stop simulation and output the angles.
     if isempty(crossTime)
         yTotal = [yTotal;y];
-        tTotal = [tTotal,time + currentTime];
+        tTotal = [tTotall;t + currentTime];
         fprintf('Block does not impact in %ds interval\n',tLim);
         break
     end
@@ -61,7 +61,7 @@ while ~stop
     
     %Add solution to total solution
     yTotal = [yTotal;y];
-    tTotal = [tTotal,tVec + currentTime];
+    tTotal = [tTotal;t + currentTime];
     
     %To match offset in times
     currentTime = currentTime + crossTime;
