@@ -20,25 +20,44 @@ eTotal(:,4) = eTotal(:,4) - params.m*params.g*(2*params.b-params.l);
         psi  = y(3);
         dpsi = y(4);
         
+        M = params.M;
+        r0 = params.r_0;
+        J = params.J;
+        m = params.m;
+        r1 = params.r_1;
+        theta_1 = params.theta_1;
+        l = params.l;
+        theta_0 = params.theta_0;
+        g = params.g;
+        
         rocking = sign(phi);
         
+        
+        
+        
         xdot = -params.beeta*params.omega*sin(params.omega*t);
-        T_b = (params.M/2)*(xdot^2 -2*params.r_0*xdot*y(2)*sin(rocking*y(1) + params.theta_0)... 
-                + (params.r_0^2*y(2)^2)) + (params.J/2)*y(2)^2;
         
-        T_p = (params.m/2)*(xdot^2 -2*params.r_1*xdot*y(2)*sin(rocking*y(1) + params.theta_1) ...
-                + 2*params.l*xdot*y(4)*cos(y(3)) -2*params.r_1*params.l*y(4)*y(2)*sin(params.theta_1 + rocking*(y(1) - y(2)))...
-                + (params.l*y(4))^2 + (params.r_1*y(2))^2);
-                 
-        V_b = params.M*params.g*params.r_0*sin(rocking*phi + params.theta_0);
-        
-        V_p = params.m*params.g*(params.r_1*sin(params.theta_1 + rocking*phi) - params.l*cos(psi));
-        
-        %w/o forcing...
-         %T_b = (params.M/2)*((params.r_0^2*dphi^2)) + (params.J/2)*dphi^2;
-         
-         %T_p = (params.m/2)*(-2*params.r_1*params.l*dpsi*dphi*sin(params.theta_1 + rocking*(phi - psi))...
-          %      + (params.l*dpsi)^2 + (params.r_1*dphi)^2);
+        if sign(rocking) == -1
+            %Negative Rocking
+            T_b = (M/2)*((-r0*y(2)*sin(theta_0 - y(1)) + xdot)^2 + (-r0*y(2)*cos(theta_0 - y(1)))^2) + (J*y(2)^2)/2;
+            
+            T_p = (m/2)*((-r1*y(2)*sin(theta_1 - y(1)) + xdot + l*y(4)*cos(y(3)))^2 ...
+                   + (r1*y(2)*cos(theta_1 - y(1)) + l*y(4)*sin(y(3)))^2);
+            
+            V_b = M*g*r0*sin(theta_0 - y(1));
+            
+            V_p = m*g*(r1*sin(theta_1 - y(1)) - l*cos(y(3)));
+        else 
+            %Positive Rocking
+            T_b = (M/2)*((-r0*y(2)*sin(y(1) + theta_0) + xdot)^2 + ( r0*y(2)*cos(y(1) + theta_0))^2) + (J*y(2)^2)/2;
+            
+            T_p = (m/2)*((-r1*y(2)*sin(y(1) + theta_1) + l*y(4)*cos(y(3)) + xdot)^2 ...
+                   + (r1*y(2)*cos(y(1) + theta_1) + l*y(4)*sin(y(3)))^2);
+            V_b = M*g*r0*sin(y(1) + theta_0);
+            
+            V_p = m*g*(r1*sin(y(1) + theta_1) - l*cos(y(3)));
+        end
+            
         
         E = [T_b; T_p; V_b; V_p];
       

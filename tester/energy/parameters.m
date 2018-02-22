@@ -6,7 +6,7 @@ params = struct();
 
 %Fundamental Constants:
 g = 9.81;           params.g = g;
-m = 100;            params.m = m;
+m = 25;            params.m = m;
 M = 100;              params.M = M;
 mu = m/M;           params.mu = mu;
 a = 0.01;           params.a =a;

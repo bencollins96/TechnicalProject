@@ -1,0 +1,18 @@
+#The Rocking Block Xppaut file.
+dw/dt=x
+dx/dt=A*w+B*y+C*i(t)+h(w)*P
+dy/dt=z
+dz/dt=D*w+E*y+F*i(t)+h(w)*Q
+#Where
+i(t)=-beeta*omega*omega*cos(omega*t)
+h(w) = sign(w)
+#and
+param A=1.471298e+01,B=-7.356488e+00,C=7.498969e-01,P=-1.103473e-01
+param D=2.942595e+01,E=-2.452298e+01,F=4.997938e-01,Q=-2.206947e-01
+param beeta=8.000000e-04,omega=10
+
+w(0)=0.001
+x(0)=0
+y(0)=0
+z(0)=0
+done

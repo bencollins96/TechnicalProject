@@ -1,13 +1,9 @@
 function [tvect,yvect,te,ye,ie,se] = filippov(vfields,jacobians,pfunction,solver,tspan,params,y0,C,inopts)
 % Version 2006-07-12
-
 % [tvect,yvect,te,ye,ie,se] = filippov(vfields,jacobians,pfunction,solver,tspan,y0,params,C,inopts)
 
-%TODO: somethine to do with impact.... I dont really understand the
-%problem......
-
 %ME! I added the coefficient of restitution.
-
+r = 0.9;
 
 t1 = tspan(end);
 t0 = tspan(1);
@@ -19,26 +15,15 @@ options = odeset(inopts,'Events',@fevents);
 yvect = [];tvect = [];
 te = []; ye = []; ie = []; se = [];
 stopit = 0;
-y = [];
 
 while ~stopit
-    %Solve the system up to t1
-  
-
+    %Solve the system up to t1.
     [t,y,TE,YE,IE] = feval(solver,@filippovfunc,tspan,y0,options,vfields,jacobians,params,C,state,dir);
-    startRocking = sign(y(1,1));
-    endRocking = -startRocking;
     
-    
-    
-%     if any(isnan(y(end,:)))
-%         error('y is a full of NaNs');
-%     end
     %get ready for new solution, end point = new start point. Here is where
     %I impose the impact rule.
     y0 = y(end,:);
-    y0(2) = params.r*y0(2);
-    
+    y0(2) = r*y0(2);
     
     %add y and t values to total, also add time of events..
     yvect = [yvect;y];
@@ -48,7 +33,7 @@ while ~stopit
 
     tspan =[t(end),t1];
     
-    if ~isempty(IE) && (t(end)~=t1)
+    if ~isempty(IE) & (t(end)~=t1)
         for k = 1:length(IE)
             ie = [ie;IE(k)];
             if IE(k) == 4
@@ -65,14 +50,14 @@ while ~stopit
                                 state(4) = -state(4);
                                 state(5) = -state(5);    
                                 dir([1,IE(k)]) = -[1,dir(IE(k))];
-                            case 5
+                            case 5,
                             
                             otherwise
                                 disp('Error, there is something wrong with the event in filippov')
                         end
                     case state(4)
                         switch IE(k)
-                            case 1
+                            case 1,
                                state(1)=-state(1);
                                state(2)=-state(2);                           
                                dir(IE(k)) = -dir(IE(k));
@@ -80,14 +65,14 @@ while ~stopit
                                 state(4) = -state(4);
                                 state(5) = -state(5);    
                                 dir(IE(k)) = -dir(IE(k));
-                            case 5
+                            case 5,
                             
                             otherwise
                                 disp('Error, there is something wrong with the event in filippov')
                         end
                     case state(5)
                         switch IE(k)
-                            case 1
+                            case 1,
                                state(1)=-1;
                                state(2)=-1;
                                state(3)=-state(3);
@@ -96,7 +81,7 @@ while ~stopit
                                 state(4) = -state(4);
                                 state(5) = -state(5);    
                                 dir(IE(k)) = -dir(IE(k));
-                            case 5
+                            case 5,
                                 
                            otherwise
                                 disp('Error, there is something wrong with the event in filippov')
@@ -176,22 +161,11 @@ end
 
 %-------------------- filippovfunc ------------------------
 
-function dy = filippovfunc(t,y,vfields,jacobians,params,C,state,dir)
-
-% if any(isnan(y))
-%     error('y has NaNs');
-% end
+function dy = filippovfunc(t,y,vfields,jacobians,params,C,state,dir);
 
 dy=zeros(length(y),1);
 
 [F1,F2,H,dH,h1,hdir] = feval(vfields,t,y,params,'');
-
-%F1,F2 are all nans! except for last value.
-% if any(isnan(F1))
-%     error('F1 has NaNs');
-%     return
-% end
-
 
 switch 1
     case state(1)

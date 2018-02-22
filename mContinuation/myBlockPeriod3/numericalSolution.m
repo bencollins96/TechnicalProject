@@ -7,61 +7,57 @@
 %          4) solve equations up to next impact time and repeat.
 
 
-function [tTotal,yTotal] = numericalSolution(IC,tSpan,params)
-
-ss = -params.P/params.A;
-
-%IC = [a*(1+mu)/b*(1+2*mu); 0; 0.1;0]; Almost oscillatory.
-%IC = [params(4)/params(1),-0.01,-0.0291,0]; this too...
-%IC = [ ss - 0.5*ss,0,0,0,0];
+function [tTotal,yTotal] = numericalSolution(IC,params,tSpan)
 
 %How long do we wait for an impact?
 tLim = 5;
 
-yTotal = [];
-tTotal = [];
+yTotal = zeros(60000,5);
+tTotal = zeros(60000,1);
 currentTime = 0;
 stop = 0;
+impactNum = 0;
+
 while ~stop
+  
+    tToEnd = tSpan - currentTime;
     
-    timeToEnd = tSpan - currentTime;
-    
-    if timeToEnd < tLim 
-        time = linspace(0,timeToEnd,400);
+    if tToEnd < tLim
+        time = linspace(0,tToEnd,200);
         options = odeset('Events',@eventFcn,'RelTol',1e-13,'AbsTol',1e-15);
-        [tEnd,yEnd,crossTime,ye,ie] = ode45(@(t,x)odeFunLeft(t,x,IC,params),time, IC,options);
+        [tEnd,yEnd,crossTime,~,~] = ode45(@(t,x)rockingBLockEq(t,x,IC,params),time, IC,options);  
         
         if isempty(crossTime)
-            yTotal = [yTotal;yEnd];
-            size(tTotal)
-            size(tEnd)
-            tTotal = [tTotal,time + currentTime];
+            yTotal(1+200*impactNum:200*(impactNum+1),:) = yEnd;
+            tTotal(1+200*impactNum:200*(impactNum+1)) = tEnd+ currentTime;
             stop = 1;
             break
         end
     end
+        
     
     %Calculate the impact time.
-    time = linspace(0,tLim,400);
+    time = linspace(0,tLim,200);
     options = odeset('Events',@eventFcn,'RelTol',1e-13,'AbsTol',1e-15);
-    [t,y,crossTime,ye,ie] = ode45(@(t,x)odeFunLeft(t,x,IC,params),time, IC,options);
-    
-    
-    
-    
+    [t,y,crossTime,~,~] = ode45(@(t,x)rockingBLockEq(t,x,IC,params),time, IC,options);
     
     %if there is no impact stop simulation 
     if isempty(crossTime)
-        yTotal = [yTotal;y];
-        tTotal = [tTotal,time + currentTime];
+        yTotal(1+200*impactNum:200*(impactNum+1),:) = y;
+        tTotal(1+200*impactNum:200*(impactNum+1)) = t+ currentTime;
         fprintf('Block does not impact in %ds interval\n',tLim);
+        break
+    elseif crossTime < 0.00001
+        yTotal(1+200*impactNum:200*(impactNum+1),:) = y;
+        tTotal(1+200*impactNum:200*(impactNum+1)) = t+ currentTime;
+        fprintf('Block is settling\n');
         break
     end
     
     %Solve equations up to crossTime
     tVec = linspace(0,crossTime,200);
     options = odeset('Events',@eventFcn,'RelTol',1e-13,'AbsTol',1e-15);
-    [t,y,te,ye,ie] = ode45(@(t,x)odeFunLeft(t,x,IC,params),tVec, IC,options);
+    [t,y,~,~,~] = ode45(@(t,x)rockingBLockEq(t,x,IC,params),tVec, IC,options);
     
     %Initial Conditions for cycle are end conditions of previous
     IC = y(end,:);
@@ -73,26 +69,30 @@ while ~stop
     IC(1) = sign(IC(2))*eps;
     
     %Add solution to total solution
-    yTotal = [yTotal;y];
-    tTotal = [tTotal,tVec + currentTime];
+    yTotal(1+200*impactNum:200*(impactNum+1),:) = y;
+    tTotal(1+200*impactNum:200*(impactNum+1)) = t+ currentTime;
     
     %To match offset in times
     currentTime = currentTime + crossTime;
-end
     
+    impactNum = impactNum+1;
+end
+   
+yTotal = yTotal(1:(impactNum+1)*200,:);
+tTotal = tTotal(1:(impactNum+1)*200,:);
 
-function dx = odeFunLeft(t,x,IC,params)
+function dx = rockingBLockEq(~,x,IC,params)
 
 rocking = sign(IC(1));
     
 %Time for forcing, autonomous equations: extra variable.
 forcingTime = x(5);
 
-forcing = -params.beeta*params.omega^2*cos(forcingTime);
+forcing = -params.beeta*cos(forcingTime);
 dx1 = x(2);
 dx2 = params.A*x(1) + params.B*x(3) + params.C*forcing + rocking*params.P;
-dx3 = x(4);
-dx4 = params.D*x(1) + params.E*x(3) + params.F*forcing + rocking*params.Q;
+dx3 = 0;%x(4);
+dx4 = 0;%   params.D*x(1) + params.E*x(3) + params.F*forcing + rocking*params.Q;
 dx5 = params.omega;
 
 dx = [dx1;dx2;dx3;dx4;dx5];

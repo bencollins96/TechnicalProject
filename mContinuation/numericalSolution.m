@@ -56,7 +56,7 @@ while ~stop
     
     %Solve equations up to crossTime
     tVec = linspace(0,crossTime,200);
-    options = odeset('Events',@eventFcn,'RelTol',1e-13,'AbsTol',1e-15);
+    options = odeset('Events',@(t,y)eventFcn(t,y),'RelTol',1e-13,'AbsTol',1e-15);
     [t,y,~,~,~] = ode45(@(t,x)rockingBLockEq(t,x,IC,params),tVec, IC,options);
     
     %Initial Conditions for cycle are end conditions of previous
@@ -88,7 +88,7 @@ rocking = sign(IC(1));
 %Time for forcing, autonomous equations: extra variable.
 forcingTime = x(5);
 
-forcing = -params.beeta*params.omega^2*cos(forcingTime);
+forcing = -params.beeta*cos(forcingTime);
 dx1 = x(2);
 dx2 = params.A*x(1) + params.B*x(3) + params.C*forcing + rocking*params.P;
 dx3 = x(4);

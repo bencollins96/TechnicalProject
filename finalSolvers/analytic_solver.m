@@ -6,7 +6,7 @@
 %okay.
 %initial conditions are wrong
 
-function [tTotal,yTotal,impact ] = analytic_solver(IC,params,tSpan)
+function [tTotal,yTotal] = analyticSolver(IC,params,tSpan)
 
 
 tLim = 5;
@@ -14,15 +14,15 @@ yTotal = [];
 tTotal = [];
 currentTime = 0;
 stop = 0;
-impact =1;
 
 while ~stop
+
+    tToEnd = tSpan - currentTime;
     
-    timeToEnd = tSpan  - currentTime;
-    if timeToEnd < tLim
-        crossTime = getCrossTime(IC,timeToEnd,params);
-        if crossTime == -1
-            timeVec = linspace(0,timeToEnd,200);
+    if tToEnd  < tLim
+        crossTime = getCrossTime(IC,tToEnd,params);
+        if (crossTime == -1)
+            timeVec = linspace(0,tToEnd,200);
             yEnd = analytic(IC,timeVec,params);
             yTotal = [yTotal,yEnd];
             tTotal = [tTotal,timeVec + currentTime];
@@ -30,19 +30,16 @@ while ~stop
             break
         end
     end
-            
-
+       
     %Find the crossing time, given "initial conditions"
     crossTime = getCrossTime(IC,tLim,params);
 
     %Fixes case where block does not overturn
     if (crossTime == -1) 
         timeVec = linspace(0,tLim,200);
-        ySolNoImpact = analytic(IC,timeVec,params);
-        yTotal = [yTotal,ySolNoImpact];
+        yNoImpact = analytic(IC,timeVec,params);
+        yTotal = [yTotal,yNoImpact];
         tTotal = [tTotal,timeVec + currentTime];
-        impact = 0;
-        error('Block overturned');
         break
     end
         
@@ -62,12 +59,9 @@ while ~stop
     IC = [ySol(:,end)',currentTime];
     IC(2) = params.r*IC(2);
     
-    
     %either introduce eps as error or set equal to zero and pass rocking sign as extra
     %parameter.
     IC(1) = sign(IC(2))*eps;
-    
-    IC = real(IC);
     
 end
 
@@ -93,7 +87,6 @@ function crossTime =  getCrossTime(IC,tLim,params)
   
   %If no impact, do special things
   if(isempty(timeImpact))
-      %fprintf('Block does not impact in %ds interval\n',tLim);
       crossTime = -1;
       return
   end
@@ -102,13 +95,13 @@ function crossTime =  getCrossTime(IC,tLim,params)
   options = optimset('Tolx',eps);
   crossTime = fzero(@(t)phiAngle(IC,t,params),timeImpact,options);
   
-  function phiAng = phiAngle(IC,t,params)
-    angles = analytic(IC,t,params);
-    phiAng = angles(1,:);
-  end
 
 end
 
+function phiAng = phiAngle(IC,t,params)
+    angles = analytic(IC,t,params);
+    phiAng = angles(1,:);
+end
 
 function y = analytic(IC,t,params)
 

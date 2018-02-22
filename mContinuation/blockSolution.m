@@ -7,7 +7,7 @@
 %          4) solve equations up to next impact time and repeat.
 
 
-function [tTotal,yTotal] = numericalSolution(IC,params,tSpan)
+function [tTotal,yTotal] = blockSolution(IC,params,tSpan)
 
 %How long do we wait for an impact?
 tLim = 5;
@@ -48,8 +48,9 @@ while ~stop
         fprintf('Block does not impact in %ds interval\n',tLim);
         break
     elseif crossTime < 0.00001
-        yTotal(1+200*impactNum:200*(impactNum+1),:) = y;
-        tTotal(1+200*impactNum:200*(impactNum+1)) = t+ currentTime;
+        n = length(t)
+        yTotal(1+200*impactNum:200*(impactNum) + n,:) = y;
+        tTotal(1+200*impactNum:200*(impactNum) + n) = t+ currentTime;
         fprintf('Block is settling\n');
         break
     end
@@ -87,12 +88,17 @@ rocking = sign(IC(1));
     
 %Time for forcing, autonomous equations: extra variable.
 forcingTime = x(5);
-
-forcing = -params.beeta*params.omega^2*cos(forcingTime);
+alpha = params.alpha;
+g = params.g;
+p =params.p;% sqrt(4*params.r_0/3);
+r0 = params.r_0;
+b = params.b;
+a = params.a;
+%forcing = -params.beeta*params.omega^2*cos(forcingTime);
 dx1 = x(2);
-dx2 = params.A*x(1) + params.B*x(3) + params.C*forcing + rocking*params.P;
-dx3 = x(4);
-dx4 = params.D*x(1) + params.E*x(3) + params.F*forcing + rocking*params.Q;
+dx2 = params.A*x(1) + params.P*rocking  +  -params.C*params.beeta*cos(forcingTime);
+dx3 = 0;%x(4);
+dx4 = 0;%   params.D*x(1) + params.E*x(3) + params.F*forcing + rocking*params.Q;
 dx5 = params.omega;
 
 dx = [dx1;dx2;dx3;dx4;dx5];

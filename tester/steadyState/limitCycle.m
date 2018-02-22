@@ -2,14 +2,18 @@
 
 clear all 
     
-params = parameters(10);
+params = parameters(22);
 
-IC = [-0.5*params.P/params.A,0,0,0,0];
+ss = -params.P/params.A;
 
+IC = [0.1*ss,0,0,0,0];
+%IC = [0.0005    0.012    -0.0052    -0.0138  156.2942];
+%IC = [0.5*ss,0,0,0,0];
 map = [];
 
+tSpan = 200*(2*pi/params.omega);
 
-[tTotal,yTotal,te,ye,ie,se] = runfilippov(IC,params);
+[tTotal,yTotal] = numericalSolution(IC,params,tSpan);
 
 if any(any(isnan(yTotal)))
     fprintf('Error, NaN');
@@ -25,9 +29,7 @@ plot(tTotal,yTotal(:,1:4));
 title('Dynamics');
 ylabel('Angle/Angular velocity');
 ylabel('Time');
-legend('phi','dphi','psi','dpsi');
-
-
+legend('phi','dphi','psi','dphi');
 
 [pks,locs] = findpeaks(cos(params.omega*tTotal));
 

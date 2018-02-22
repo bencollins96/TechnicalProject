@@ -57,5 +57,12 @@ plot(tBefore,sum(eBefore,2),'b');
 legend('t0=0','t0= just before impact');
 title('Energy');
 
+Eminus = sum(energy(tLinear(400),yLinear(400,:),params));
+Eplus = sum(energy(tLinear(401),yLinear(401,:),params));
+fprintf('Numerical Energy Change is %d\n',Eplus - Eminus);
+fprintf('Analytic Energy Change is %d\n',energyGain(yLinear(400,:),params));
+
+
+
 
 

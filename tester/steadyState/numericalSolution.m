@@ -24,7 +24,7 @@ while ~stop
     
     if tToEnd < tLim
         time = linspace(0,tToEnd,200);
-        options = odeset('Events',@eventFcn,'RelTol',1e-13,'AbsTol',1e-15);
+        options = odeset('Events',@eventFcn,'RelTol',1e-10,'AbsTol',1e-12);
         [tEnd,yEnd,crossTime,~,~] = ode45(@(t,x)rockingBLockEq(t,x,IC,params),time, IC,options);  
         
         if isempty(crossTime)
@@ -48,8 +48,11 @@ while ~stop
         fprintf('Block does not impact in %ds interval\n',tLim);
         break
     elseif crossTime < 0.00001
-        yTotal(1+200*impactNum:200*(impactNum+1),:) = y;
-        tTotal(1+200*impactNum:200*(impactNum+1)) = t+ currentTime;
+        length = size(y,1)
+        y
+        t
+        yTotal(1+200*impactNum:200*impactNum+length,:) = y;
+        tTotal(1+200*impactNum:200*impactNum+length) = t+ currentTime;
         fprintf('Block is settling\n');
         break
     end
@@ -86,9 +89,9 @@ function dx = rockingBLockEq(~,x,IC,params)
 rocking = sign(IC(1));
     
 %Time for forcing, autonomous equations: extra variable.
-forcingTime = x(5);
+%forcingTime = x(5);
 
-forcing = -params.beeta*params.omega^2*cos(forcingTime);
+forcing = -params.beeta*params.omega^2*cos(x(5));
 dx1 = x(2);
 dx2 = params.A*x(1) + params.B*x(3) + params.C*forcing + rocking*params.P;
 dx3 = x(4);
