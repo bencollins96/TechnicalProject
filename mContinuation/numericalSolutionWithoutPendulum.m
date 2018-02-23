@@ -7,7 +7,7 @@
 %          4) solve equations up to next impact time and repeat.
 
 
-function [tTotal,yTotal] = numericalSolution(IC,params,tSpan)
+function [tTotal,yTotal] = numericalSolutionWithoutPendulum(IC,params,tSpan)
 
 %How long do we wait for an impact?
 tLim = 5;

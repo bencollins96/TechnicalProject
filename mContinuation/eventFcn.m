@@ -1,8 +1,14 @@
-function [phiAngle, isTerminal, direction] = eventFcn(t,y)
+function [value, isTerminal, direction] = eventFcn(t,y)
 
-phiAngle = y(1);
-isTerminal = 1;
-direction = 0;
+%Detect block impact.
+value(1) = y(1);
+
+%Detect crossing poincare section: max forcing
+value(2) = mod(y(5),2*pi)- pi;
+
+%Stop if impact but not on crossing poincare
+isTerminal = [1,0];
+direction  = [0,-1];
 
 end
 

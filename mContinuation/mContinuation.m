@@ -7,12 +7,13 @@ params = parameters(0);
 ss = -params.P/params.A;
 
 tSpan = 300*(2*pi/params.omega);
-[t,y] = numericalSolution([4*10^(-2),0,0,0,0],params,tSpan);
+[t,y] = numericalSolutionWithoutPendulum([4*10^(-2),0,0,0,0],params,tSpan);
 [~,locs] = findpeaks(cos(params.omega*t));
 IC = y(locs(end),:);
 
 numIterates = 1;
 mapCell = cell(numIterates,1);
+
 
 for i =1:numIterates
     
