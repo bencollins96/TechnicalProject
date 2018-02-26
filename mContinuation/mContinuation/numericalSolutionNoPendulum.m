@@ -102,8 +102,8 @@ while ~stop
     curInd = curInd + 200;
 end
    
-yTotal = yTotal(1:curInd,:);
-tTotal = tTotal(1:curInd,:);
+yTotal = yTotal(1:curInd, :);
+tTotal = tTotal(1:curInd, :);
 
 function dx = rockingBlockEq(~,x,IC,params)
 
@@ -115,8 +115,8 @@ forcingTime = x(5);
 forcing = -params.beeta*cos(forcingTime);
 dx1 = x(2);
 dx2 = params.A*x(1) + params.B*x(3) + params.C*forcing + rocking*params.P;
-dx3 = x(4);
-dx4 = params.D*x(1) + params.E*x(3) + params.F*forcing + rocking*params.Q;
+dx3 = 0; %x(4)
+dx4 = 0;  params.D*x(1) + params.E*x(3) + params.F*forcing + rocking*params.Q;
 dx5 = params.omega;
 
 dx = [dx1;dx2;dx3;dx4;dx5];

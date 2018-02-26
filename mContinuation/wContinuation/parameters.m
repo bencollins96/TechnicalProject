@@ -1,20 +1,19 @@
 %% Params file 
 
-function params= parameters(mu)
+function params= parameters(omega)
 
 params = struct();
 
 %Fundamental Constants:
 g = 9.81;           params.g = g;
-m = 0;            params.m = m;
+m = 0.25;            params.m = m;
 M = 100;              params.M = M;
-%mu = m/M;
-params.mu = mu;
+mu = m/M;          params.mu = mu;
 a = 0.25;           params.a =a;
 b = 1;              params.b = b;
 l = 0.75;           params.l = l;
 beeta = 4;     params.beeta = beeta;
-omega = 6.54;      params.omega = omega;
+params.omega = omega;
 r = 0.925;            params.r = r;
 numImpacts = 10;    params.numImpacts = numImpacts;
 alpha = a/b; params.alpha = alpha;
