@@ -25,10 +25,19 @@ impactDifference = impactDifference*(2*pi/params.omega);
 figure
 plot(impactDifference(2:end-2),impactDifference(3:end-1),'.k','MarkerSize',8);
 hold on
-title('FIrst Return map');
+title('First Return map');
 ylabel('Time to impact i +1');
 xlabel('Time to impact i');
 savefig('TorusFirstReturn.fig');
+
+figure('pos',[10 10 900 600]);
+plot3(y(480000:end,1),y(480000:end,3),y(480000:end,4));
+xlabel('phi');
+ylabel('psi');
+zlabel('dpsi');
+view(-64.3,-5.2);
+savefig('literalTorus.fig');
+
 
 
 

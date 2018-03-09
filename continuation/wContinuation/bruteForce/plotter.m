@@ -39,5 +39,5 @@ h3 = plot(period1{1}(1,6),period1{1}(1,1),'.r','MarkerSize',8);
 h1 = plot(period1{1}(1,6),period1{1}(1,1),'.g','MarkerSize',8);
 
 xlabel('Frequency, omega');
-ylabel('Angle');
+ylabel('Block Angle');
 legend([h1,h2,h3],{'Period 1','Period 3','Period 5'});

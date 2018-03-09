@@ -15,10 +15,10 @@ close all
 % numImpacts = 10;    params.numImpacts = numImpacts;
 % alpha = a/b; params.alpha = alpha;
 
-params = parameters;
-
+params = parameters(18.9307491362598);
+IC = [0.0696651438982098,0.317220344384918,0.193949892352435,1.43781254668453,1878.67240684670];
 tSpan = 200*(2*pi/params.omega);
-[t,y] = numericalSolution([4*10^(-2),0,0,0,0],params,tSpan);
+[t,y] = numericalSolution(IC,params,tSpan);
 
 tStable = size(y,1)/2;
 plot(t,y(:,1:2))

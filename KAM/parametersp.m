@@ -1,20 +1,20 @@
 %% Params file 
 
-function params= parameters(l)
+function params= parameters(omega)
 
 params = struct();
 
 %Fundamental Constants:
 g = 9.81;           params.g = g;
-m = 0.2;            params.m = m;
+m = 0.25;            params.m = m;
 M = 1;            params.M = M;
 mu = m/M;           params.mu = mu;
-a = 0.2;           params.a =a;
+a = 0.25;           params.a =a;
 b = 1;              params.b = b;
-          params.l = l;
-beeta = 4;     params.beeta = beeta;
-omega = 1; params.omega = omega;
-r = 0.925;            params.r = r;
+l = 0.75;           params.l = l;
+beeta = 0.0001;     params.beeta = beeta;
+params.omega = omega;
+r = 1;            params.r = r;
 numImpacts = 10;    params.numImpacts = numImpacts;
 alpha = a/b; params.alpha = alpha;
 
@@ -34,9 +34,6 @@ E = -I*(3*mu*r_1^2 + 4*r_0^2)/(3*l);     params.E = E;
 F = I*(2*b^2 - a^2*(3*mu + 4))/(3*g*l);  params.F = F;
 Q = -I*(2*a*b*(1+mu))/l;                 params.Q = Q;
 p = (3*g)/(4*r_0);                       params.p = p;
-params.omega = omega*p;
-discrim = sqrt((E+A)^2 - 4*(A*E - B*D));
-params.lambda_1 = (1/sqrt(2))*sqrt((E+A) + discrim);
+params.omega = omega;
 params.beeta = beeta*alpha*g;
-
 end
