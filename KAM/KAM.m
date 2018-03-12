@@ -15,6 +15,7 @@ omegaVec = 20*pi/0.54;
 
 for i =1:1
 
+    
     paramsp = parametersp(omegaVec(i)); 
     [tp,yp,poincarep,impactIndP] = numericalSolutionImp(IC,paramsp,4000);
     
