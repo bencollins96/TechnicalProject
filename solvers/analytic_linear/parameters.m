@@ -2,11 +2,11 @@
 
 %Fundamental Constants:
 g = 9.81;
-mu = 0.5;
-a =0.001;
+mu = 0.25;
+a =0.01;
 b = 1;
-l = 1;
-beeta = 0.0001;
+l = 0.75;
+beeta = 0;
 omega = 10;
 
 %Equation Constants:

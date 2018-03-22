@@ -12,7 +12,7 @@ M = 1;              params.M = M;
 params.mu = mu;
 a = 0.1;           params.a =a;
 b = 1;              params.b = b;
-l = 0.1;           params.l = l;
+l = 0.75;           params.l = l;
 beeta = 0.5;     params.beeta = beeta;
 omega = 10;      params.omega = omega;
 r = 0.925;            params.r = r;

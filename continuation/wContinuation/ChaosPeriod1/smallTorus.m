@@ -32,10 +32,11 @@ savefig('TorusFirstReturn.fig');
 
 figure('pos',[10 10 900 600]);
 plot3(y(480000:end,1),y(480000:end,3),y(480000:end,4));
-xlabel('phi');
-ylabel('psi');
-zlabel('dpsi');
+xlabel('$\phi$', 'Interpreter','latex');
+ylabel('$\psi$','Interpreter','latex');
+zlabel('$\dot{\psi}$','Interpreter','latex');
 view(-64.3,-5.2);
+set(gca,'FontSize',16);
 savefig('literalTorus.fig');
 
 

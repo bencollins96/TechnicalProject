@@ -1,0 +1,11 @@
+%%big torus 
+%% Big torus
+omega = 7.79203414699925;
+params = parameters(1);
+params = parameters(omega/params.p);
+
+IC = [0.0917887499279652,0.0733954630700953,0.0891418537477012,0.800676196227706,17460.9719686521];
+[t,y,poincare,impactInd] = numericalSolutionImp(IC,params,1000);
+impactTimes = t(impactInd);
+impactDifference  =  [impactTimes;0] - [0;impactTimes];
+impactDifference = impactDifference*(2*pi/params.omega);

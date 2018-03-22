@@ -36,7 +36,7 @@ Q = -I*(2*a*b*(1+mu))/l;                 params.Q = Q;
 p = (3*g)/(4*r_0);                       params.p = p;
 params.omega = omega*p;
 discrim = sqrt((E+A)^2 - 4*(A*E - B*D));
-params.lambda_1 = (1/sqrt(2))*sqrt((E+A) + discrim);
+params.resonant = (1/sqrt(2))*sqrt(-(E+A) + discrim);
 params.beeta = beeta*alpha*g;
 
 end

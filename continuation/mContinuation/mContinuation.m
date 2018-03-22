@@ -1,17 +1,17 @@
 %%mContinuation
 close all
+clear all 
 
 %Initialise Parameters
 params = parameters(0);
 ss = -params.P/params.A;
-
 %Find initial solution without block & Save the initial conditions.
 numPeriods = 500;
 tSpan = numPeriods*(2*pi/params.omega);
 [t,y,poincare] = numericalSolutionNoPendulum([4*10^(-2),0,0,0,0],params,tSpan);
 IC = poincare(end,:);
 
-numIterates = 70;
+numIterates = 140;
 paramVec = linspace(1e-8,0.25,numIterates);
 
 [totalPoincare] = continuation(IC,paramVec,numPeriods);
@@ -22,6 +22,7 @@ for i =1:length(totalPoincare)
     plot(paramVec(i)*ones(12,1),totalPoincare{i}(:,2),'.b','MarkerSize',10);
     plot(paramVec(i)*ones(12,1),totalPoincare{i}(:,3),'.r','MarkerSize',10);
     plot(paramVec(i)*ones(12,1),totalPoincare{i}(:,4),'.g','MarkerSize',10);
+    i
 end
 
 h1 = plot(paramVec(1),totalPoincare{1}(1,1),'.k','MarkerSize',10);

@@ -5,7 +5,7 @@ IC = [0.053303038182731   0.264525593989546   0.134474552802132   1.087123044343
 % paramVec = [paramVec1,paramVec2];
 % [totalPoincare] = wContinuation(IC, paramVec,300);
 
-paramVec3 = linspace(3,6.54,100);
+paramVec3 = linspace(3,5,100);
 [totalPoincare1] = wContinuation(IC, paramVec3,300);
 figure; hold on;
 

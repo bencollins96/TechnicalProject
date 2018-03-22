@@ -20,9 +20,9 @@ figure('pos',[10 10 900 600]); hold on;
 num = round(0.9*length(y));
 plot(y(num:end,1),y(num:end,2))
 scatter(poincare(2000:end,1),poincare(2000:end,2))
-xlabel('phi');
-ylabel('dphi');
-title('Phase Portrait with poincare crossings');
+xlabel('$\phi$','Interpreter','latex');
+ylabel('$\dot{\phi}$','Interpreter','latex');
+set(gca,'FontSize',16);
 savefig('P1ChaosPortrait.fig');
 close 
 %Messy
@@ -33,9 +33,9 @@ impactDifference = impactDifference*(2*pi/params.omega);
 figure('pos',[10 10 900 600]); hold on;
 plot(impactDifference(2:end-2),impactDifference(3:end-1),'.k','MarkerSize',8)
 hold on
-xlabel('Time to impact i');
-ylabel('Time to impact i+1');
-title('First return map');
+xlabel('Time to impact i','Interpreter','latex');
+ylabel('Time to impact i+1','Interpreter','latex');
+set(gca,'FontSize',16);
 savefig('P1ChaosFirstReturn.fig');
 
 

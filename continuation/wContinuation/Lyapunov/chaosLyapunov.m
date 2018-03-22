@@ -55,5 +55,6 @@ end
 figure('pos',[10 10 900 600]);
 M = movmean(lyapunov,200);
 plot(200:1:10000-200,M(200:end-200),'LineWidth',1.5);
-ylabel('Average Lyapunov Exponent');
-xlabel('Iteration');
+ylabel('Average Lyapunov Exponent','Interpreter','latex');
+xlabel('Iteration','Interpreter','latex');
+set(gca,'FontSize',16);

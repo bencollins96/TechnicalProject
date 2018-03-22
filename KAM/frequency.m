@@ -30,11 +30,12 @@ f = Fs*(0:(L/2))/L;
 
 figure('pos',[10 10 900 600]);
 plot(f(1:5000),P1(1:5000),'LineWidth',2);
-xlabel('Frequency, Hz');
-ylabel('Amplitude');
+xlabel('Frequency, Hz','Interpreter','latex');
+ylabel('Amplitude','Interpreter','latex');
+set(gca,'FontSize',16);
 savefig('frequency.fig');
 
-
+return
 figure('pos',[10 10 900 600]);
 plot(y(260000:end,1),y(260000:end,2));
 xlabel('Block Angle');
